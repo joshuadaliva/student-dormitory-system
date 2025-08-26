@@ -1,0 +1,19 @@
+{
+    "name": "joshua/student-dormitory-system",
+    "description": "manage your dormitory using the student dormitory management system",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Joshua\\StudentDormitorySystem\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "daliva",
+            "email": "daliva1234099@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.10"
+    }
+}
