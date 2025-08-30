@@ -2,9 +2,14 @@
 
     require_once "../db/config.php";
     require_once "../functions/functions.php";
+    session_start();
 
     $error = "";
     $success = null;
+
+    if(isset($_SESSION["name"]) && isset($_SESSION["student_id"])){
+        header("Location: " . "./dashboard.php");
+    }   
 
     if($_SERVER["REQUEST_METHOD"] === "POST"){
 
@@ -18,11 +23,7 @@
         $contact = sanitizeInput($_POST["contact"]);
         $address = sanitizeInput($_POST["address"]);
 
-        $query  = "SELECT email from students where email = ?";
-        $stmt = $conn->prepare($query);
-        $stmt ->execute([$email]);
-        $is_email_exist = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
             $error = "email not valid";
         }
@@ -32,35 +33,40 @@
         )){
             $error = "all fields are required";
         }
-        else if($is_email_exist){
-            $error = "email already exist";
+        else if(strlen($password) < 8 || !preg_match("/[0-9]/", $password) || !preg_match("/[\W]/", $password)){
+            $error = "password must be 8 charaters long, contains atleast one number and contains atleast one symbol ";
         }
-        else if(strlen($password) < 8){
-            $error = "password must be 8 charaters";
-        }
-        elseif (!preg_match("/[0-9]/", $password)){
-            $error = "password must contain atleast one number";
-        }
-        else if(!preg_match("/[\W]/", $password)){
-            $error = "password must contain atleast one symbol";
-        }
+
         else if($password !== $confirm_pass){
             $error = "password not matched";
         }
+
+        
         
        
         if(empty($error)){
-            $password = password_hash($password, PASSWORD_BCRYPT);
-            $query = "INSERT INTO students(name, email, password, department, program,gender,address,contact) VALUES(?,?,?,?,?,?,?,?)";
+            $query  = "SELECT email from students where email = ?";
             $stmt = $conn->prepare($query);
-            $stmt->execute([$name, $email, $password, $department, $program, $gender, $address,$contact]);
-            $rowCount = $stmt->rowCount();
-            if($rowCount > 0){
-                $success = true;
+            $stmt ->execute([$email]);
+            $is_email_exist = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($is_email_exist){
+                $error = "email already exist";
+            }
+            else{
+                $password = password_hash($password, PASSWORD_BCRYPT);
+                $query = "INSERT INTO students(name, email, password, department, program,gender,address,contact) VALUES(?,?,?,?,?,?,?,?)";
+                $stmt = $conn->prepare($query);
+                $stmt->execute([$name, $email, $password, $department, $program, $gender, $address,$contact]);
+                $rowCount = $stmt->rowCount();
+                if($rowCount > 0){
+                    $success = true;
+                    header("Location:" . "../student/login.php");
+                    $_SESSION["signup_sucess"] = true;
+                }
             }
             
         }
-
 
 
     }
@@ -93,9 +99,6 @@
         <p class="text-to-login">or <a href="login.php">login to your existing account</a></p>
         <?php if(!empty($error)): ?>
             <p class="error"><?= htmlspecialchars($error) ?></p>
-        <?php endif ?>
-        <?php if($success):?>
-            <p class="success">signup success</p>
         <?php endif ?>
         <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
             <label for="email:">Full Name<br>
