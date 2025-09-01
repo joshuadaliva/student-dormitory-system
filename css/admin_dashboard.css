@@ -49,6 +49,11 @@
 .admin-dashboard .recent h1{
     font-size: 20px;
 }
+.container-table{
+    overflow: auto;
+    width: 100%;
+    position: relative;
+}
 .admin-dashboard .recent table{
     width: 100%;
     text-align: left;

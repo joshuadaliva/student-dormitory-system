@@ -22,7 +22,6 @@ create table rooms(
     roomType varchar(100) not null,
     description varchar(250) not null,
     imagePath varchar(250) not null,
-    is_available BOOLEAN default true,
     rent_fee DECIMAL(10,2) not null ,
     status varchar(20) not null,
     created_at timestamp default current_timestamp not null

@@ -49,4 +49,28 @@
     }
 
 
+    function uploadImage($file){
+        $target_dir = "../uploads/";
+        $target_file = $target_dir . basename($file["file"]["name"]);
+        $check = getimagesize($file["file"]["tmp_name"]);
+        if($check === false){
+            return [
+                "error" => "file is not an image" 
+            ];
+        }
+            
+        if(move_uploaded_file($file["file"]["tmp_name"], $target_file)){
+            return [
+                "success" => "the file " . htmlspecialchars(basename($file["file"]["name"])) . " is uploaded",
+                "file" => $target_file
+            ];
+        }
+        else{
+            return [
+                "error" => "There was an error uploading your file" 
+            ];
+        }   
+    }
+
+
 ?>

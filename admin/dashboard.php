@@ -85,7 +85,7 @@
             </div>
             <div class="recent card">
                 <h1>Recent Bookings</h1>
-                <div>
+                <div class="container-table">
                     <table>
                         <tr>
                             <th>STUDENT</th>
@@ -103,14 +103,14 @@
                             <td>JOSHUA DALIVA</td>
                             <td>1</td>
                             <td>AUG 20 2025</td>
-                            <td>Pending</td>
+                            <td>Pendingdsadsadasdsads</td>
                         </tr>
                     </table>
                 </div>
             </div>
             <div class="recent card">
                 <h1>Recent Payments</h1>
-                <div>
+                <div class="container-table">
                     <table>
                         <tr>
                             <th>STUDENT</th>
@@ -122,7 +122,7 @@
                             <td>JOSHUA DALIVA</td>
                             <td>1000</td>
                             <td>AUG 20 2025</td>
-                            <td>Pending</td>
+                            <td>Pendsadsdasdasdsding</td>
                         </tr>
                         <tr>
                             <td>JOSHUA DALIVA</td>
