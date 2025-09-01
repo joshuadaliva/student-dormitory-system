@@ -1,0 +1,146 @@
+.student-dashboard {
+    background-color: #f9fafb;
+    width: 100%;
+    flex: 1;
+    margin-left: 265px;
+}
+.student-dashboard .success-login{
+    background-color: #bcfcc9;
+    color: #22c55e;
+    margin-right: 20px;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 10px;
+}
+.student-dashboard .container {
+    width: 98%;
+    height: 100%;
+    display: grid;
+    gap: 20px;
+    grid-template-areas: "info info room"
+        "payment payment payment";
+}
+
+.student-dashboard .info,
+.room,
+.payment {
+    box-shadow: 0px 2px 5px rgb(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    height: 300px;
+}
+
+.student-dashboard .info {
+    grid-area: info;
+}
+
+.student-dashboard .container h1 {
+    font-size: 20px;
+    color: #1f2937;
+}
+
+.student-dashboard .info .container-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.student-dashboard .info .container-info .label {
+    color: #4b5563;
+    margin-bottom: 2px;
+    font-size: 13px;
+}
+
+.student-dashboard .room {
+    grid-area: room;
+}
+
+.student-dashboard .room .room-container-none {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+}
+
+.student-dashboard .room .room-container-none p {
+    color: #6b7280;
+}
+
+.student-dashboard .room .room-container-none button {
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    background-color: #2563eb;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.student-dashboard .room .room-container-none button:hover {
+    background-color: var(--indigo);
+}
+
+
+.student-dashboard .payment {
+    grid-area: payment;
+}
+
+.student-dashboard .payment .payment-container-none {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+}
+
+.student-dashboard .payment .payment-container-none p {
+    color: #6b7280;
+}
+
+.student-dashboard .payment .payment-container-none button {
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    background-color: #2563eb;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.student-dashboard .payment .payment-container-none button:hover {
+    background-color: var(--indigo);
+}
+
+@media screen and (max-width:967px) {
+    .student-dashboard{
+        margin-left: 0;
+    }
+}
+
+@media screen and (max-width: 651px) {
+    .student-dashboard .container {
+        width: 98%;
+        height: 100%;
+        display: grid;
+        gap: 20px;
+        grid-template-areas: "info"
+            "room"
+            "payment";
+    }
+    .student-dashboard .info .container-info {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+footer {
+    background-color: #111827;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    margin-top: 4rem;
+}

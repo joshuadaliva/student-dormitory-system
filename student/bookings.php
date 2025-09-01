@@ -1,22 +1,11 @@
 <?php
 
     require_once "../db/config.php";
-    require_once "../functions/functions.php";
-
     session_start();
 
-    isAdmin("../admin/dashboard.php");
-    if(isset($_SESSION["user_type"])){
-        if( $_SESSION["user_type"] !== "student") {
-            header("Location: " . "./login.php");
-        }
-    }
-    else{
+    if(!isset($_SESSION["name"]) && !isset($_SESSION["student_id"])){
         header("Location: " . "./login.php");
     }
-
-
-    
 
 
     $student_id = $_SESSION["student_id"];
@@ -40,11 +29,21 @@
     <link rel="stylesheet" href="../css/student_dashboard.css">
 </head>
 <body>
-    <?php require_once "../component/sidebar.php" ?>
+    <div class="sidebar">
+        <h1>dormitory system</h1>
+        <hr color="#e6e8ec" size="1">
+        <p class="user"><?= htmlspecialchars("Welcome! ". $_SESSION["name"]) ?></p>
+        <div class="bottom-links">
+            <div class="page-selection">
+                <a href="">Dashboard</a>
+                <a href="">My Bookings</a>
+                <a href="">My Payments</a>
+                <a href="">Profile</a>
+            </div>
+            <button>Logout</button>
+        </div>
+    </div>
     <div class="student-dashboard">
-        <?php if(isset($_SESSION["success_login"])): ?>
-            <p class="success-login"><?= htmlspecialchars($_SESSION["success_login"]) ?></p>
-        <?php endif ?>
         <h1>Student Dashboard</h1>
         <div class="container">
             <div class="info">
@@ -85,7 +84,7 @@
             </div>
         </div>
         <footer>
-            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+            <p>© 2025 Student Dormitory Management System. All rights reserved.</p>
         </footer>
     </div>
 </body>

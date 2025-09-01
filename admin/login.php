@@ -3,12 +3,10 @@
     require_once "../functions/functions.php";
     require_once "../db/config.php";
     session_start();
-    if(isset($_SESSION["signup_sucess"])){
-        $signup_success = $_SESSION["signup_sucess"] || false;
-    }
 
-    isStudent("./dashboard.php");
-    isAdmin("../admin/dashboard.php");
+    isStudent("../student/dashboard.php");
+    isAdmin("./dashboard.php");
+    
 
     $error = "";
     $success = "";
@@ -23,17 +21,16 @@
         }
         
         if(empty($error)){
-            $query = "SELECT student_id, name , email, password from students where email = ? LIMIT 1";
+            $query = "SELECT admin_id, name , email, password from admin where email = ? LIMIT 1";
             $stmt = $conn->prepare($query);
             $stmt->execute([$email]);
-            $student_info = $stmt->fetch(PDO::FETCH_ASSOC);
+            $admin_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if($student_info && password_verify($password, $student_info["password"])){
-                $_SESSION["student_id"] = $student_info["student_id"];
-                $_SESSION["name"] = $student_info["name"];
+            if($admin_info && password_verify($password, $admin_info["password"])){
+                $_SESSION["admin_id"] = $admin_info["admin_id"];
+                $_SESSION["name"] = $admin_info["name"];
+                $_SESSION["user_type"] = "admin";
                 $_SESSION["success_login"] = "login successful";
-                $_SESSION["user_type"] = "student";
-
                 header("Location: " . "./dashboard.php");
             }
             else{
@@ -53,14 +50,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>student login</title>
+    <title>Admin login</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="../css/student_admin_login.css">
 </head>
 <body>
         <div class="left-panel">
-            <h1>Login Now</h1>
+            <h1>Admin Login</h1>
             <br>
             <div>
                 <p><i class="fa fa-check check-icon" aria-hidden="true"></i> Access all room</p>
@@ -69,10 +66,7 @@
             </div>
         </div>
         <div class="right-panel">
-            <h1>Student Sign In</h1>
-            <?php if(isset($signup_success)): ?>
-                <p class="success">Sign Up Success. You can login Now</p>
-            <?php endif ?>
+            <h1>Admin</h1>
             <?php if(!empty($success)): ?>
                 <p class="success"><?= $success ?></p>
             <?php endif ?>

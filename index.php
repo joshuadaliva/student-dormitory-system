@@ -35,7 +35,7 @@
             <li><a href="">About</a></li>
             <li><a href="">Location</a></li>
             <li><a href="">Contact</a></li>
-            <li class="active-signup"><a href="signup.php">Signup</a></li>
+            <li class="active-signup"><a href="./student/signup.php">Signup</a></li>
             <li><a href="">Login</a></li>
         </ul>
     </div>

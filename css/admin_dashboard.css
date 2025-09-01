@@ -1,0 +1,93 @@
+.admin-dashboard{
+    margin-left: 250px;
+    padding: 0px 20px;
+    width: 100%;
+}
+.admin-dashboard .success-login{
+    background-color: #bcfcc9;
+    color: #22c55e;
+    margin-right: 20px;
+    padding: 10px;
+    font-size: 15px;
+    border-radius: 10px;
+}
+.admin-dashboard  .all-overview-section{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: 100%;
+    gap: 10px;
+}
+.admin-dashboard .card{
+    box-shadow: 0px 2px 5px rgb(0, 0,0, 0.2);
+    border-radius: 10px;
+    background-color: white;
+    padding: 10px;
+}
+.admin-dashboard .card-overview{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-left: 10px;
+    padding-left: 10px;
+}
+.admin-dashboard .card-overview h1{
+    font-size: 17px;
+    margin-bottom: 0;
+    color: #374151;
+}
+.admin-dashboard .card-overview p{
+    font-size: 25px;
+    margin-top: 0;
+    font-weight: bold;
+}
+
+.admin-dashboard .recent{
+    margin-top: 2rem;
+    padding: 15px; 
+    border-radius: 10px;
+}
+.admin-dashboard .recent h1{
+    font-size: 20px;
+}
+.admin-dashboard .recent table{
+    width: 100%;
+    text-align: left;
+    border-radius: 20px;
+    border: 1px solid #e6e8ec;
+    border-collapse: collapse;
+    padding: 10px;
+}
+.admin-dashboard .recent th{
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e6e8ec;
+    padding: 10px;
+    color: #4b5563;
+}
+.admin-dashboard .recent td{
+    padding: 10px;
+    border-bottom: 1px solid #e6e8ec;
+    color: #374151;
+
+}
+footer {
+    background-color: #111827;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    margin-top: 4rem;
+}
+@media screen and (max-width:956px) {
+    .admin-dashboard{
+        margin-left: 0;
+    }
+}
+@media screen and (max-width:796px) {
+    .admin-dashboard .all-overview-section{
+        grid-template-columns: 1fr 1fr;
+    }
+}
+@media screen and (max-width:500px) {
+    .admin-dashboard .all-overview-section{
+        grid-template-columns: 1fr;
+    }
+}

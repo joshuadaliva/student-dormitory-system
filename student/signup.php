@@ -5,11 +5,9 @@
     session_start();
 
     $error = "";
-    $success = null;
 
-    if(isset($_SESSION["name"]) && isset($_SESSION["student_id"])){
-        header("Location: " . "./dashboard.php");
-    }   
+    isStudent("./dashboard.php");
+    isAdmin("../admin/dashboard.php");
 
     if($_SERVER["REQUEST_METHOD"] === "POST"){
 
@@ -41,7 +39,7 @@
             $error = "password not matched";
         }
 
-        
+    
         
        
         if(empty($error)){
