@@ -80,6 +80,21 @@
         return $details;
     }
 
+    function fetchAllDetails($query, $value, $conn){
+        if($value == false){
+            $stmt =  $conn->prepare($query);
+            $stmt->execute();
+            $details = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $details;
+        }
+        else{
+            $stmt =  $conn->prepare($query);
+            $stmt->execute([$value]);
+            $details = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $details;
+        }
+    }
+
 
 
 ?>

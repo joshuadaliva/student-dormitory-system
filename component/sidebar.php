@@ -134,7 +134,7 @@
                 <div class="page-selection">
                     <a href="../student/dashboard.php">Dashboard</a>
                     <a href="../student/bookings.php">My Bookings</a>
-                    <a href="../student/dashboard.php">My Payments</a>
+                    <a href="../student/payment.php">My Payments</a>
                     <a href="">Profile</a>
                 </div>
             <?php endif ?>

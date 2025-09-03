@@ -18,6 +18,7 @@
 
     
 
+    
 
     $student_id = $_SESSION["student_id"];
     $query = "SELECT name,email,program,contact  from students where student_id = ?";
@@ -44,6 +45,7 @@
     <div class="student-dashboard">
         <?php if(isset($_SESSION["success_login"])): ?>
             <p class="success-login"><?= htmlspecialchars($_SESSION["success_login"]) ?></p>
+            <?php unset($_SESSION["success_login"]); ?>
         <?php endif ?>
         <h1>Student Dashboard</h1>
         <div class="container">

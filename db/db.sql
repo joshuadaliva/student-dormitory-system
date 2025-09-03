@@ -28,13 +28,11 @@ create table rooms(
 );
 
 
-
-
 create table bookings(
     booking_id int PRIMARY KEY AUTO_INCREMENT,
     student_id int not null,
     room_id int not null,
-    booking_date DATETIME not null,
+    booking_date DATETIME DEFAULT CURRENT_TIMESTAMP not null,
     status varchar(20) not null,
     checkout_date DATETIME null,
     created_at timestamp default current_timestamp not null,
