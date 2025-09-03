@@ -1,20 +1,49 @@
 <?php
 
     require_once "../db/config.php";
+    require_once "../functions/functions.php";
+
     session_start();
 
-    if(!isset($_SESSION["name"]) && !isset($_SESSION["student_id"])){
+    isAdmin("../admin/dashboard.php");
+    if(isset($_SESSION["user_type"])){
+        if( $_SESSION["user_type"] !== "student") {
+            header("Location: " . "./login.php");
+        }
+    }
+    else{
         header("Location: " . "./login.php");
     }
 
 
-    $student_id = $_SESSION["student_id"];
-    $query = "SELECT name,email,program,contact  from students where student_id = ?";
-    $stmt = $conn->prepare($query);
-    $stmt -> execute([$student_id]);
-    $student_info = $stmt->fetch(PDO::FETCH_ASSOC);
+    // FETCH ALL ROOMS
+    $stmt = $conn->prepare("SELECT * from rooms where status = 'Available'");
+    $stmt->execute();
+    $allRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
+    // FETCH BOOKINGS DETAILS
+    $booking_details = fetchDetails("SELECT r.room_number , r.roomType, b.booking_date, b.status, r.description, r.imagePath, r.rent_fee FROM rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students USING(student_id) WHERE student_id = ?", $_SESSION["student_id"], $conn);
+
+    $error = "";
+    $success = "";
+    if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])){
+        $is_student_book_room = countWhereAllRows("SELECT booking_id from bookings where student_id = ?", $_SESSION["student_id"]);
+        if(empty($is_student_book_room)){
+            $stmt = $conn->prepare("INSERT INTO bookings(student_id,room_id,booking_date,status) values(?,?, CURDATE(), 'Pending');");
+            $stmt->execute([$_SESSION["student_id"], $_POST["room_id"]]);
+            $rowCount = $stmt->rowCount();
+            if($rowCount > 0){
+                $success = "room booked , status pending";
+                $booking_details = fetchDetails("SELECT r.room_number , r.roomType, b.booking_date, b.status, r.description, r.imagePath, r.rent_fee FROM rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students USING(student_id) WHERE student_id = ?", $_SESSION["student_id"], $conn);
+            }
+        }
+        else{
+            $error = "you currently booked a room";
+        }
+
+        
+    }
 
 ?>
 
@@ -26,65 +55,61 @@
     <title>Document</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="../css/student_dashboard.css">
+    <link rel="stylesheet" href="../css/admin_bookings.css">
 </head>
 <body>
-    <div class="sidebar">
-        <h1>dormitory system</h1>
-        <hr color="#e6e8ec" size="1">
-        <p class="user"><?= htmlspecialchars("Welcome! ". $_SESSION["name"]) ?></p>
-        <div class="bottom-links">
-            <div class="page-selection">
-                <a href="">Dashboard</a>
-                <a href="">My Bookings</a>
-                <a href="">My Payments</a>
-                <a href="">Profile</a>
-            </div>
-            <button>Logout</button>
-        </div>
-    </div>
-    <div class="student-dashboard">
-        <h1>Student Dashboard</h1>
-        <div class="container">
-            <div class="info">
-                <h1><i class="fas fa-user-circle" style="color: var(--blue);"></i>  My Information</h1>
-                <div class="container-info">
-                    <div>
-                        <p class="label">Name:</p>
-                        <?= htmlspecialchars($student_info["name"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Email:</p>
-                        <?= htmlspecialchars($student_info["email"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Program:</p>
-                        <?= htmlspecialchars($student_info["program"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Contact:</p>
-                        <?= htmlspecialchars($student_info["contact"]) ?>
-                    </div>
+    <?php require_once "../component/sidebar.php" ?>
+    <div class="student-bookings">
+        <?php if(!empty($error)): ?>
+            <p class="error-message"><?= htmlspecialchars($error) ?></p>
+        <?php endif ?>
+        <?php if(!empty($success)): ?>
+            <p class="success-message"><?= htmlspecialchars($success) ?></p>
+        <?php endif ?>
+        <h1>Bookings</h1>
+        <div class="container1">
+            <div class="rooms-container">
+                <h1><i class="fas fa-door-open" style="color: blue; font-size:2.8rem"></i>  Available Rooms</h1>
+                <div class="container-card">
+                    <?php if($allRooms): ?>
+                        <?php foreach($allRooms as $rooms): ?>
+                            <div class="card">
+                                <img src="<?= htmlspecialchars($rooms["imagePath"]) ?>" alt="">
+                                <h1><?= htmlspecialchars($rooms["room_number"]) . " " . htmlspecialchars($rooms["roomType"]) ?></h1>
+                                <p class="description"><?= htmlspecialchars($rooms["description"]) ?></p>
+                                <div class="books-rent-btn">
+                                    <p class="pay-isavaible"><?= htmlspecialchars($rooms["rent_fee"])  . " /month <br> " . htmlspecialchars($rooms["status"])  ?> </p>
+                                    <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                                        <input type="hidden" name="room_id" value="<?= $rooms["room_id"] ?>">
+                                        <button type="submit" name="add_bookings">Book Now</button>
+                                    </form>
+                                </div>
+                            </div>
+                        <?php endforeach?>
+                    <?php endif?>   
                 </div>
             </div>
-            <div class="room">
-                <h1><i class="fas fa-bed" style="color: green;"></i>  My Room</h1>
-                <div class="room-container-none">
-                    <i class="fas fa-door-closed" style="color: #d1d5db; font-size:2.8rem"></i>
-                    <p style="text-align: center;">You don't have an approved room <br> booking yet.</p>
-                    <button>book a room</button>
-                </div>
-            </div>
-            <div class="payment">
-                <h1><i class="fas fa-receipt" style="color: indigo;"></i></i>  My Recent Payment</h1>
-                <div class="payment-container-none">
-                    <i class="fas fa-wallet" style="color: #d1d5db; font-size:2.8rem"></i>
-                    <p style="text-align: center;">No payment records found.</p>
-                </div>
+
+            <div class="room-list container">
+                <h1>My Bookings</h1>
+                <?php if($booking_details): ?>
+                    <div class="container-table">
+                        <h1><?= "Room: " . htmlspecialchars($booking_details["room_number"]). " " . htmlspecialchars($booking_details["roomType"]) ?></h1>
+                        <p><?= "Booked on " . htmlspecialchars($booking_details["booking_date"]) ?></p>
+                        <h1><?= "Monthly Rent: " . htmlspecialchars($booking_details["rent_fee"]) ?></h1>
+                        <button>Make payment</button>
+                        <?php if($booking_details["status"] == "Approved"): ?>
+                            <p class="status approved"> <?= htmlspecialchars($booking_details["status"]) ?></p>
+                        <?php endif ?>
+                        <?php if($booking_details["status"] == "Pending"): ?>
+                            <p class="status pending"> <?= htmlspecialchars($booking_details["status"]) ?></p>
+                        <?php endif ?>
+                    </div>
+                <?php endif?>
             </div>
         </div>
         <footer>
-            <p>© 2025 Student Dormitory Management System. All rights reserved.</p>
+            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
         </footer>
     </div>
 </body>

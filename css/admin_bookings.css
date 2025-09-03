@@ -1,0 +1,187 @@
+.student-bookings{
+    margin-left: 265px;
+    width: 80%;
+}
+.container1{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.container1 h1 {
+    font-size: 20px;
+    color: #1f2937;
+}
+.rooms-container{
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgb(0, 0, 0,0.2);
+    padding: 20px;
+}
+.rooms-container .container-card{
+    display: flex;
+    align-items: flex-start;
+    max-width: 100%;
+    height: auto;
+    overflow-x: auto;
+    gap: 20px;
+    padding-bottom: 20px;
+    
+}
+.container-card .card{
+    flex: 0 0 250px;
+    border-radius: 10px;
+    border: 2px solid #e3e4e5;
+    padding: 10px;
+    box-shadow: 0px 2px 5px rgb(0, 0, 0,0.1 );
+
+}
+.container-card .card:hover{
+    box-shadow: 0px 2px 5px rgb(0, 0, 0,0.2);
+
+}
+.container-card .card img{
+    border-radius: 10px;
+    width: 100%;
+    height: 200px;
+}
+.container-card .card h1{
+    font-size: 15px;
+    margin-bottom: 0;
+
+}
+.container-card .card .description{
+    font-size: 12px;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+
+}
+.container-card .card div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.container-card .card .pay-isavaible{
+    font-size: 15px;
+}
+.container-card .card button{
+    background-color: #3b82f6;
+    padding: 10px 10px;
+    color: white;
+    border:none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+footer {
+    background-color: #111827;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    margin-top: 4rem;
+}
+.booking{
+    box-shadow: 0px 2px 5px rgb(0, 0, 0,0.1 );
+    background-color: white;
+
+}
+.booking .booking-container-none {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+}
+
+.booking .booking-container-none p {
+    color: #6b7280;
+}
+
+.booking .booking-container-none button {
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    background-color: #2563eb;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.booking .booking-container-none button:hover {
+    background-color: var(--indigo);
+}
+.room-list {
+    padding: 0px 20px;
+    padding-bottom: 20px;
+}
+.container {
+    box-shadow: 0px 2px 5px rgb(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: white;
+    margin-top: 50px;
+}
+.container-table{
+    border: 2px solid #e3e4e5;
+    padding: 0px 20px;
+    border-radius: 20px;
+    position: relative;
+}
+.container-table h1{
+    font-size: 15px;
+    margin-bottom: 0;
+    margin-top: 20px;
+}
+.container-table p{
+    margin-bottom: 0;
+    color: #6b7280;
+    margin-top: 5px;
+    font-size: 12px;
+}
+.container-table button{
+    padding: 10px 20px;
+    background-color: #22c55e;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    margin: 10px 0px;
+    cursor: pointer;
+}
+.container-table .status{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 20px;
+    border-radius: 10px;
+}
+.container-table .pending{
+    background-color: #ffe28a;
+    color: rgb(209, 138, 6);
+}
+.container-table .approved{
+    color: green;
+    background-color: #bcfcc9;
+}
+.error-message{
+    padding: 10px;
+    margin: 15px 5px;
+    color: #ef4444;
+    background-color: #ffebeb;
+    border-left: 2px solid #ef4444;
+}
+.success-message{
+    padding: 10px;
+    margin: 10px 17px;
+    color: green;
+    background-color: #bcfcc9;
+    border-left: 2px solid green;
+}
+@media screen and (max-width: 970px) {
+    .student-bookings{
+        margin-left: 0;
+        width: 100%;
+    }
+}

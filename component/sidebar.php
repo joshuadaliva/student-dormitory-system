@@ -132,9 +132,9 @@
         <div class="bottom-links">
             <?php if($_SESSION["user_type"] === "student"): ?>
                 <div class="page-selection">
-                    <a href="">Dashboard</a>
-                    <a href="">My Bookings</a>
-                    <a href="">My Payments</a>
+                    <a href="../student/dashboard.php">Dashboard</a>
+                    <a href="../student/bookings.php">My Bookings</a>
+                    <a href="../student/dashboard.php">My Payments</a>
                     <a href="">Profile</a>
                 </div>
             <?php endif ?>

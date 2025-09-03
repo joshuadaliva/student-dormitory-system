@@ -40,10 +40,10 @@
         return $count;
     }
 
-    function countWhereAllRows($query, $status){
+    function countWhereAllRows($query, $value){
         include "../db/config.php";
-        $stmt = $conn->prepare("SELECT COUNT(booking_id) FROM bookings where status = ?");
-        $stmt->execute([$status]);
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$value]);
         $count = $stmt->fetch(PDO::FETCH_COLUMN);
         return $count;
     }
@@ -71,6 +71,15 @@
             ];
         }   
     }
+
+
+    function fetchDetails($query, $value, $conn){
+        $stmt =  $conn->prepare($query);
+        $stmt->execute([$value]);
+        $details = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $details;
+    }
+
 
 
 ?>

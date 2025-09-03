@@ -19,10 +19,13 @@
     $admin_id = $_SESSION["admin_id"];
     $student_count = countAllRows("SELECT COUNT(student_id) FROM students");
     $rooms_count = countAllRows("SELECT COUNT(room_id) FROM rooms");
-    $pending_bookings_count = countWhereAllRows("SELECT COUNT(booking_id) FROM bookings where status = ?", "pending");
-    $pending_payments_count = countWhereAllRows("SELECT COUNT(payment_id) FROM payments where status = ?", "pending");
+    $pending_bookings_count = countWhereAllRows("SELECT COUNT(booking_id) FROM bookings where status = ?", "Pending");
+    $pending_payments_count = countWhereAllRows("SELECT COUNT(payment_id) FROM payments where status = ?", "Pending");
 
 
+    $stmt = $conn->prepare("SELECT s.name , r.room_number, d.booking_date, d.status from bookings d INNER join students s using (student_id) INNER JOIN rooms r using (room_id); ");
+    $stmt->execute();
+    $all_recent_bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -93,18 +96,16 @@
                             <th>DATE</th>
                             <th>STATUS</th>
                         </tr>
-                        <tr>
-                            <td>JOSHUA DALIVA</td>
-                            <td>1</td>
-                            <td>AUG 20 2025</td>
-                            <td>Pending</td>
-                        </tr>
-                        <tr>
-                            <td>JOSHUA DALIVA</td>
-                            <td>1</td>
-                            <td>AUG 20 2025</td>
-                            <td>Pendingdsadsadasdsads</td>
-                        </tr>
+                        <?php if($all_recent_bookings): ?>
+                            <?php foreach($all_recent_bookings as $recent_booking): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($recent_booking["name"]) ?></td>
+                                    <td><?= htmlspecialchars($recent_booking["room_number"]) ?></td>
+                                    <td><?= htmlspecialchars($recent_booking["booking_date"]) ?></td>
+                                    <td><?= htmlspecialchars($recent_booking["status"]) ?></td>
+                                </tr>
+                            <?php endforeach?>
+                        <?php endif ?>
                     </table>
                 </div>
             </div>
