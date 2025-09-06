@@ -47,9 +47,9 @@ create table payments(
     student_id int not null,
     booking_id int not null,
     amount DECIMAL(10,2) not null,
-    payment_date DATETIME not null,
+    payment_date timestamp DEFAULT CURRENT_TIMESTAMP not null
     status varchar(20),
-    notes varchar(250),
+    notes varchar(250) DEFAULT "no notes",
     created_at timestamp default current_timestamp not null,
     foreign key(student_id) references students(student_id),
     foreign key(booking_id) references bookings(booking_id)

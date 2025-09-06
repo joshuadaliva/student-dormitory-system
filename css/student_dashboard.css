@@ -40,13 +40,13 @@
     color: #1f2937;
 }
 
-.student-dashboard .info .container-info {
+.container-info {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-.student-dashboard .info .container-info .label {
+.container-info .label {
     color: #4b5563;
     margin-bottom: 2px;
     font-size: 13px;
@@ -69,13 +69,17 @@
 }
 
 .student-dashboard .room .room-container-none button {
-    color: white;
     padding: 10px 20px;
     border: none;
     background-color: #2563eb;
     border-radius: 10px;
     cursor: pointer;
+}
+.student-dashboard .room .room-container-none a {
+    color: white;
+    cursor: pointer;
     font-size: 15px;
+    text-decoration: none;
 }
 
 .student-dashboard .room .room-container-none button:hover {
@@ -129,7 +133,7 @@
             "room"
             "payment";
     }
-    .student-dashboard .info .container-info {
+    .container-info {
         height: 100%;
         display: flex;
         flex-direction: column;

@@ -15,8 +15,8 @@ if (isset($_SESSION["user_type"])) {
 }
 
 
-$all_pending_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number,date_format(b.booking_date, '%M %d, %Y') as booking_date from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) where b.status =  ?", 'Pending', $conn);
-$all_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number,date_format(b.booking_date, '%M %d, %Y') as booking_date, b.status from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id)", '', $conn);
+$all_pending_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number,date_format(b.booking_date, '%M %d, %Y') as booking_date from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) where b.status =  ? order by b.booking_date desc", 'Pending', $conn);
+$all_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number,date_format(b.booking_date, '%M %d, %Y') as booking_date, b.status from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) order by b.booking_date desc", '', $conn);
 
 $error = "";
 $success = "";
@@ -68,82 +68,89 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
         <h1>Manage Bookings</h1>
         <div class="recent card">
             <h1>Pending Bookings</h1>
-            <div class="container-table">
-                <table>
-                    <tr>
-                        <th>BOOKING ID</th>
-                        <th>STUDENT</th>
-                        <th>ROOM</th>
-                        <th>DATE</th>
-                        <th>ACTIONS</th>
-                    </tr>
+            <?php if(empty($all_pending_bookings)): ?>
+                <p>No pending bookings.</p>
+            <?php endif ?>
+            <?php if ($all_pending_bookings): ?>
+                <div class="container-table">
+                    <table>
+                        <tr>
+                            <th>BOOKING ID</th>
+                            <th>STUDENT</th>
+                            <th>ROOM</th>
+                            <th>DATE</th>
+                            <th>ACTIONS</th>
+                        </tr>
 
-                    <?php if ($all_pending_bookings): ?>
-                        <?php foreach ($all_pending_bookings as $pending_booking): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($pending_booking["booking_id"]) ?></td>
-                                <td><?= htmlspecialchars($pending_booking["name"]) ?></td>
-                                <td><?= htmlspecialchars($pending_booking["room_number"]) ?></td>
-                                <td><?= htmlspecialchars($pending_booking["booking_date"]) ?></td>
-                                <td>
-                                    <div class="action">
-                                        <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                                            <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
-                                            <button class="approve" name="approve">Approve</button>
-                                        </form>
-                                        <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                                            <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
-                                            <button class="reject" name="reject">Reject</button>
-                                        </form>
-                                    </div>
-                                </td>
-                            <tr>
-                            <?php endforeach ?>
-                        <?php endif ?>
-                            </tr>
-                </table>
-            </div>
+                        
+                            <?php foreach ($all_pending_bookings as $pending_booking): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($pending_booking["booking_id"]) ?></td>
+                                    <td><?= htmlspecialchars($pending_booking["name"]) ?></td>
+                                    <td><?= htmlspecialchars($pending_booking["room_number"]) ?></td>
+                                    <td><?= htmlspecialchars($pending_booking["booking_date"]) ?></td>
+                                    <td>
+                                        <div class="action">
+                                            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                                                <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
+                                                <button class="approve" name="approve">Approve</button>
+                                            </form>
+                                            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                                                <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
+                                                <button class="reject" name="reject">Reject</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                <tr>
+                                <?php endforeach ?>
+                                </tr>
+                    </table>
+                </div>
+            <?php endif ?>
         </div>
         <div class="recent card">
             <h1>All Bookings</h1>
-            <div class="container-table">
-                <table>
-                    <tr>
-                        <th>BOOKING ID</th>
-                        <th>STUDENT</th>
-                        <th>ROOM</th>
-                        <th>DATE</th>
-                        <th>ACTIONS</th>
-                    </tr>
-
-                    <?php if ($all_bookings): ?>
-                        <?php foreach ($all_bookings as $all_booking): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($all_booking["booking_id"]) ?></td>
-                                <td><?= htmlspecialchars($all_booking["name"]) ?></td>
-                                <td><?= htmlspecialchars($all_booking["room_number"]) ?></td>
-                                <td><?= htmlspecialchars($all_booking["booking_date"]) ?></td>
-                                <?php if ($all_booking["status"] == "Approved"): ?>
-                                    <td>
-                                        <p class="approved"> <?= htmlspecialchars($all_booking["status"]) ?></p>
-                                    </td>
-                                <?php endif ?>
-                                <?php if ($all_booking["status"] == "Pending"): ?>
-                                    <td>
-                                        <p class="pending"> <?= htmlspecialchars($all_booking["status"]) ?></p>
-                                    </td>
-                                <?php endif ?>
-                                <?php if ($all_booking["status"] == "Rejected"): ?>
-                                    <td>
-                                        <p class="rejected"> <?= htmlspecialchars($all_booking["status"]) ?></p>
-                                    </td>
-                                <?php endif ?>
-                            <tr>
-                            <?php endforeach ?>
-                        <?php endif ?>
-                            </tr>
-                </table>
-            </div>
+            <?php if(empty($all_bookings)): ?>
+                <p>No bookings.</p>
+            <?php endif ?>
+            <?php if ($all_bookings): ?>
+                <div class="container-table">
+                    <table>
+                        <tr>
+                            <th>BOOKING ID</th>
+                            <th>STUDENT</th>
+                            <th>ROOM</th>
+                            <th>DATE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                            <?php foreach ($all_bookings as $all_booking): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($all_booking["booking_id"]) ?></td>
+                                    <td><?= htmlspecialchars($all_booking["name"]) ?></td>
+                                    <td><?= htmlspecialchars($all_booking["room_number"]) ?></td>
+                                    <td><?= htmlspecialchars($all_booking["booking_date"]) ?></td>
+                                    <?php if ($all_booking["status"] == "Approved"): ?>
+                                        <td>
+                                            <p class="approved"> <?= htmlspecialchars($all_booking["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                    <?php if ($all_booking["status"] == "Pending"): ?>
+                                        <td>
+                                            <p class="pending"> <?= htmlspecialchars($all_booking["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                    <?php if ($all_booking["status"] == "Rejected"): ?>
+                                        <td>
+                                            <p class="rejected"> <?= htmlspecialchars($all_booking["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                <tr>
+                                <?php endforeach ?>
+                            
+                                </tr>
+                    </table>
+                </div>
+            <?php endif ?>
         </div>
     </div>
 </body>

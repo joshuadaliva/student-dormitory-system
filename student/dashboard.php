@@ -27,7 +27,7 @@
     $student_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-
+    $room_info = fetchDetails("SELECT r.room_number, r.roomType, r.rent_fee, b.booking_date from rooms r INNER JOIN bookings b USING (room_id) where b.status = 'Approved' and student_id = ?", $_SESSION["student_id"], $conn);
 ?>
 
 <!DOCTYPE html>
@@ -72,11 +72,33 @@
             </div>
             <div class="room">
                 <h1><i class="fas fa-bed" style="color: green;"></i>  My Room</h1>
-                <div class="room-container-none">
-                    <i class="fas fa-door-closed" style="color: #d1d5db; font-size:2.8rem"></i>
-                    <p style="text-align: center;">You don't have an approved room <br> booking yet.</p>
-                    <button>book a room</button>
-                </div>
+                <?php  if(empty($room_info)): ?>
+                    <div class="room-container-none">
+                        <i class="fas fa-door-closed" style="color: #d1d5db; font-size:2.8rem"></i>
+                        <p style="text-align: center;">You don't have an approved room <br> booking yet.</p>
+                        <button><a href="bookings.php">Book Now</a></button>
+                    </div>
+                <?php endif ?>
+                <?php  if($room_info): ?>
+                    <div class="container-info">
+                        <div>
+                            <p class="label">Room number:</p>
+                            <?= htmlspecialchars($room_info["room_number"]) ?>
+                        </div>
+                        <div>
+                            <p class="label">Room Type:</p>
+                            <?= htmlspecialchars($room_info["roomType"]) ?>
+                        </div>
+                        <div>
+                            <p class="label">Rent fee:</p>
+                            <?= htmlspecialchars($room_info["rent_fee"]) ?>
+                        </div>
+                        <div>
+                            <p class="label">Booking date:</p>
+                            <?= htmlspecialchars($room_info["booking_date"]) ?>
+                        </div>
+                    </div>
+                <?php endif ?>
             </div>
             <div class="payment">
                 <h1><i class="fas fa-receipt" style="color: indigo;"></i></i>  My Recent Payment</h1>

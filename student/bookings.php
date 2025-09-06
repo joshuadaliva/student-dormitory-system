@@ -16,7 +16,7 @@ if (isset($_SESSION["user_type"])) {
 
 
 // FETCH ALL ROOMS
-$stmt = $conn->prepare("SELECT * from rooms where status = 'Available'");
+$stmt = $conn->prepare("SELECT * from rooms where status = 'Available' order by created_at desc");
 $stmt->execute();
 $allRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -34,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
         $rowCount = $stmt->rowCount();
         if ($rowCount > 0) {
             $success = "room booked , status pending";
-            $booking_details = fetchAllDetails("SELECT r.room_number , r.roomType, b.booking_date, b.status, r.description, r.imagePath, r.rent_fee FROM rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students USING(student_id) WHERE student_id = ?", $_SESSION["student_id"], $conn);
+            $booking_details = fetchAllDetails("SELECT r.room_number , r.roomType, b.booking_date, b.status, r.description, r.imagePath, r.rent_fee FROM rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students USING(student_id) WHERE student_id = ? order by b.booking_date desc", $_SESSION["student_id"], $conn);
         }
     } else {
         $error = "you currently booked a room";
@@ -67,7 +67,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
         <h1>Bookings</h1>
         <div class="container1">
             <div class="rooms-container">
-                <h1><i class="fas fa-door-open" style="color: blue; font-size:2.8rem"></i> Available Rooms</h1>
+                <h1><i class="fas fa-door-open" style="color: blue; font-size:20px; margin-right:12px"></i> Available Rooms</h1>
+                <?php if(empty($allRooms)): ?>
+                    <p>No rooms yet.</p>
+                <?php endif ?>
                 <div class="container-card">
                     <?php if ($allRooms): ?>
                         <?php foreach ($allRooms as $rooms): ?>
@@ -89,7 +92,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
             </div>
 
             <div class="room-list container">
-                <h1>My Bookings</h1>
+                <h1><i class="fas fa-calendar-check " style="font-size:20px; margin-right:12px; color:#16a34a"></i>My Bookings</h1>
+                <?php if(empty($booking_details)): ?>
+                    <p>No bookings.</p>
+                <?php endif ?>
                 <?php if ($booking_details): ?>
                     <?php foreach ($booking_details as $booking_detail) : ?>
                         <div class="container-table">
@@ -98,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
                             <h1><?= "Monthly Rent: " . htmlspecialchars($booking_detail["rent_fee"]) ?></h1>
                             <?php if ($booking_detail["status"] == "Approved"): ?>
                                 <p class="status approved"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
-                                <button>Make payment</button>
+                                <button><a href="payment.php">Pay Now</a></button>
                             <?php endif ?>
                             <?php if ($booking_detail["status"] == "Pending"): ?>
                                 <p class="status pending"> <?= htmlspecialchars($booking_detail["status"]) ?></p>

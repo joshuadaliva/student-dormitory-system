@@ -22,7 +22,7 @@
     $pending_payments_count = countWhereAllRows("SELECT COUNT(payment_id) FROM payments where status = ?", "Pending");
 
 
-    $stmt = $conn->prepare("SELECT s.name , r.room_number, date_format(b.booking_date, '%M %d, %Y') as booking_date, b.status from bookings b INNER join students s using (student_id) INNER JOIN rooms r using (room_id); ");
+    $stmt = $conn->prepare("SELECT s.name , r.room_number, date_format(b.booking_date, '%M %d, %Y') as booking_date, b.status from bookings b INNER join students s using (student_id) INNER JOIN rooms r using (room_id) order by b.booking_date desc");
     $stmt->execute();
     $all_recent_bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -87,44 +87,48 @@
                 
             </div>
             <div class="recent card">
-                <h1>Recent Bookings</h1>
-                <div class="container-table">
-                    <table>
-                        <tr>
-                            <th>STUDENT</th>
-                            <th>ROOM</th>
-                            <th>DATE</th>
-                            <th>STATUS</th>
-                        </tr>
-                        <?php if($all_recent_bookings): ?>
-                            <?php foreach($all_recent_bookings as $recent_booking): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($recent_booking["name"]) ?></td>
-                                    <td><?= htmlspecialchars($recent_booking["room_number"]) ?></td>
-                                    <td><?= htmlspecialchars($recent_booking["booking_date"]) ?></td>
-                                    <?php if ($recent_booking["status"] == "Approved"): ?>
-                                        <td>
-                                            <p class="approved"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($recent_booking["status"] == "Pending"): ?>
-                                        <td>
-                                            <p class="pending"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($recent_booking["status"] == "Rejected"): ?>
-                                        <td>
-                                            <p class="rejected"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                </tr>
-                            <?php endforeach?>
-                        <?php endif ?>
-                    </table>
-                </div>
+                <h1><i class="fas fa-calendar-alt" style="color:#2563eb; margin-right:12px"></i>Recent Bookings</h1>
+                <?php if(empty($all_recent_bookings)): ?>
+                    <p>No bookings.</p>
+                <?php endif ?>
+                <?php if($all_recent_bookings): ?>
+                    <div class="container-table">
+                        <table>
+                            <tr>
+                                <th>STUDENT</th>
+                                <th>ROOM</th>
+                                <th>DATE</th>
+                                <th>STATUS</th>
+                            </tr>
+                            
+                                <?php foreach($all_recent_bookings as $recent_booking): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($recent_booking["name"]) ?></td>
+                                        <td><?= htmlspecialchars($recent_booking["room_number"]) ?></td>
+                                        <td><?= htmlspecialchars($recent_booking["booking_date"]) ?></td>
+                                        <?php if ($recent_booking["status"] == "Approved"): ?>
+                                            <td>
+                                                <p class="approved"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($recent_booking["status"] == "Pending"): ?>
+                                            <td>
+                                                <p class="pending"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($recent_booking["status"] == "Rejected"): ?>
+                                            <td>
+                                                <p class="rejected"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                    </tr>
+                                <?php endforeach?>
+                        </table>
+                    </div>
+                <?php endif ?>
             </div>
             <div class="recent card">
-                <h1>Recent Payments</h1>
+                <h1><i class="fas fa-dollar-sign text-green-600" style="color:#2bab5a;margin-right:12px"></i>Recent Payments</h1>
                 <div class="container-table">
                     <table>
                         <tr>

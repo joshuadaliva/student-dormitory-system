@@ -152,6 +152,11 @@ footer {
     margin: 10px 0px;
     cursor: pointer;
 }
+.container-table a{
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
 .container-table .status{
     position: absolute;
     top: 10px;
