@@ -16,9 +16,10 @@ if (isset($_SESSION["user_type"])) {
 
 
 
+
 // FETCH BOOKINGS DETAILS
 $payment_details = fetchDetails("SELECT r.room_number, r.roomType, b.booking_id, r.rent_fee from rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students s USING(student_id) WHERE b.status = 'Approved' and s.student_id = ?", $_SESSION["student_id"], $conn);
-$all_payments = fetchAllDetails("SELECT p.payment_id, r.room_id, p.amount, date_format(p.payment_date, '%M,%d %Y') as payment_date , p.notes, p.status FROM payments p INNER JOIN bookings b USING(booking_id) INNER JOIN rooms r USING(room_id) WHERE p.student_id = ?", $_SESSION["student_id"], $conn);
+$all_payments = fetchAllDetails("SELECT p.payment_id, r.room_id, p.amount, date_format(p.payment_date, '%M,%d %Y') as payment_date , p.notes, p.status FROM payments p INNER JOIN bookings b USING(booking_id) INNER JOIN rooms r USING(room_id) WHERE p.student_id = ? order by p.payment_date desc", $_SESSION["student_id"], $conn);
 $error = "";
 $success = "";
 
@@ -62,6 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
             <?php if (!empty($success)): ?>
                 <p class="success-message"><?= htmlspecialchars($success) ?></p>
             <?php endif ?>
+            <?php if(empty($payment_details)): ?>
+                    <p>No payment.</p>
+                <?php endif ?>
             <?php if ($payment_details): ?>
                 <div class="container-table">
                     <h1><?= "Room: " . htmlspecialchars($payment_details["room_number"]) . " " . htmlspecialchars($payment_details["roomType"]) ?></h1>
@@ -75,47 +79,52 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
             <?php endif ?>
         </div>
         <div class="recent card">
-            <h1>All Bookings</h1>
-            <div class="table-container">
-                <table>
-                    <tr>
-                        <th>PAYMENT ID</th>
-                        <th>ROOM NO</th>
-                        <th>AMOUNT</th>
-                        <th>DATE</th>
-                        <th>STATUS</th>
-                        <th>NOTE</th>
-                    </tr>
+            <h1>All payments</h1>
+            <?php if(empty($all_payments)): ?>
+                <p>No payment.</p>
+            <?php endif ?>
+            <?php if ($all_payments): ?>
+                <div class="table-container">
+                    <table>
+                        <tr>
+                            <th>PAYMENT ID</th>
+                            <th>ROOM NO</th>
+                            <th>AMOUNT</th>
+                            <th>DATE</th>
+                            <th>STATUS</th>
+                            <th>NOTE</th>
+                        </tr>
 
-                    <?php if ($all_payments): ?>
-                        <?php foreach ($all_payments as $all_payment): ?>
-                            <tr>
-                                <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
-                                <td><?= htmlspecialchars($all_payment["room_id"]) ?></td>
-                                <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
-                                <td><?= htmlspecialchars($all_payment["payment_date"]) ?></td>
-                                <?php if ($all_payment["status"] == "Approved"): ?>
-                                    <td>
-                                        <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                    </td>
-                                <?php endif ?>
-                                <?php if ($all_payment["status"] == "Pending"): ?>
-                                    <td>
-                                        <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                    </td>
-                                <?php endif ?>
-                                <?php if ($all_payment["status"] == "Rejected"): ?>
-                                    <td>
-                                        <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                    </td>
-                                <?php endif ?>
-                                <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
-                            <tr>
-                            <?php endforeach ?>
-                        <?php endif ?>
-                            </tr>
-                </table>
-            </div>
+                        
+                            <?php foreach ($all_payments as $all_payment): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
+                                    <td><?= htmlspecialchars($all_payment["room_id"]) ?></td>
+                                    <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
+                                    <td><?= htmlspecialchars($all_payment["payment_date"]) ?></td>
+                                    <?php if ($all_payment["status"] == "Approved"): ?>
+                                        <td>
+                                            <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                    <?php if ($all_payment["status"] == "Pending"): ?>
+                                        <td>
+                                            <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                    <?php if ($all_payment["status"] == "Rejected"): ?>
+                                        <td>
+                                            <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                    <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
+                                <tr>
+                                <?php endforeach ?>
+                            
+                                </tr>
+                    </table>
+                </div>
+            <?php endif ?>
         </div>
         <footer>
             <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>

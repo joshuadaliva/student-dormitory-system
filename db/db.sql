@@ -40,7 +40,7 @@ create table bookings(
     foreign key(room_id) references rooms(room_id)
 );
 
-
+  
 
 create table payments(
     payment_id int PRIMARY key AUTO_INCREMENT,

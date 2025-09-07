@@ -27,7 +27,7 @@
     $student_info = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
-    $room_info = fetchDetails("SELECT r.room_number, r.roomType, r.rent_fee, b.booking_date from rooms r INNER JOIN bookings b USING (room_id) where b.status = 'Approved' and student_id = ?", $_SESSION["student_id"], $conn);
+    $room_info = fetchDetails("SELECT r.room_number, r.roomType, r.rent_fee, date_format(b.booking_date, '%M %d, %Y') as booking_date from rooms r INNER JOIN bookings b USING (room_id) where b.status = 'Approved' and student_id = ?", $_SESSION["student_id"], $conn);
 ?>
 
 <!DOCTYPE html>

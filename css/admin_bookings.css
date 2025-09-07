@@ -58,7 +58,9 @@
     cursor: pointer;
     border: none;
     border-radius: 10px;
-    color: white
+    color: white;
+    padding: 5px 10px;
+    margin: 5px 0px;
 }
 .action .approve{
     background-color:  #22c55e;
