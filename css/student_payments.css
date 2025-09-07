@@ -130,8 +130,9 @@ footer {
 
 }
 .table-container .pending,.approved,.rejected{
+    border-radius: 10px;
     text-align: center;
-    border-radius: 5px;
+    max-width: 60%;
 }
 .table-container .pending{
     background-color: #ffe28a;
@@ -149,5 +150,10 @@ footer {
     .student-payments{
         margin-left: 0;
         width: 100%;
+    }
+    .table-container .pending,.approved,.rejected{
+        border-radius: 10px;
+        text-align: center;
+        max-width: 100%;
     }
 }

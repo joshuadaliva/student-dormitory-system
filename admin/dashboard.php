@@ -20,11 +20,12 @@
     $rooms_count = countAllRows("SELECT COUNT(room_id) FROM rooms");
     $pending_bookings_count = countWhereAllRows("SELECT COUNT(booking_id) FROM bookings where status = ?", "Pending");
     $pending_payments_count = countWhereAllRows("SELECT COUNT(payment_id) FROM payments where status = ?", "Pending");
+    
 
-
-    $stmt = $conn->prepare("SELECT s.name , r.room_number, date_format(b.booking_date, '%M %d, %Y') as booking_date, b.status from bookings b INNER join students s using (student_id) INNER JOIN rooms r using (room_id) order by b.booking_date desc");
+    $stmt = $conn->prepare("SELECT s.name , r.room_number, date_format(b.booking_date, '%M %d, %Y') as booking_date, b.status from bookings b INNER join students s using (student_id) INNER JOIN rooms r using (room_id) order by b.booking_date desc limit 5");
     $stmt->execute();
     $all_recent_bookings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $all_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, date_format(p.payment_date, '%M %d, %Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) order by p.payment_date desc limit 5", null , $conn);
 
 ?>
 
@@ -129,28 +130,49 @@
             </div>
             <div class="recent card">
                 <h1><i class="fas fa-dollar-sign text-green-600" style="color:#2bab5a;margin-right:12px"></i>Recent Payments</h1>
+                <?php if(empty($all_payments)): ?>
+                <p>No payments.</p>
+            <?php endif ?>
+            <?php if ($all_payments): ?>
                 <div class="container-table">
                     <table>
                         <tr>
+                            <th>Payment ID</th>
                             <th>STUDENT</th>
                             <th>AMOUNT</th>
                             <th>DATE</th>
                             <th>STATUS</th>
+                            <th>NOTES</th>
                         </tr>
-                        <tr>
-                            <td>JOSHUA DALIVA</td>
-                            <td>1000</td>
-                            <td>AUG 20 2025</td>
-                            <td>Pendsadsdasdasdsding</td>
-                        </tr>
-                        <tr>
-                            <td>JOSHUA DALIVA</td>
-                            <td>31232</td>
-                            <td>AUG 20 2025</td>
-                            <td>Pending</td>
+                            <?php foreach ($all_payments as $all_payment): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
+                                    <td><?= htmlspecialchars($all_payment["name"]) ?></td>
+                                    <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
+                                    <td><?= htmlspecialchars($all_payment["date_payment"]) ?></td>
+                                    
+                                    <?php if ($all_payment["status"] == "Approved"): ?>
+                                        <td>
+                                            <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                    <?php if ($all_payment["status"] == "Pending"): ?>
+                                        <td>
+                                            <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                    <?php if ($all_payment["status"] == "Rejected"): ?>
+                                        <td>
+                                            <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                        </td>
+                                    <?php endif ?>
+                                    <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
+                                </tr>
+                            <?php endforeach ?>
                         </tr>
                     </table>
                 </div>
+            <?php endif ?>
             </div>
         </div>
         <footer>

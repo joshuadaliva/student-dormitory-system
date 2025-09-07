@@ -15,7 +15,7 @@ if (isset($_SESSION["user_type"])) {
 }
 
 
-$all_pending_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number,date_format(b.booking_date, '%M %d, %Y') as booking_date from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) where b.status =  ? order by b.booking_date desc", 'Pending', $conn);
+$all_pending_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number, r.room_id, date_format(b.booking_date, '%M %d, %Y') as booking_date from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) where b.status =  ? order by b.booking_date desc", 'Pending', $conn);
 $all_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number,date_format(b.booking_date, '%M %d, %Y') as booking_date, b.status from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) order by b.booking_date desc", '', $conn);
 
 $error = "";
@@ -23,10 +23,14 @@ $success = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["approve"])) {
     $stmt = $conn->prepare("UPDATE bookings SET status = 'Approved' WHERE booking_id = ?");
     $stmt->execute([$_POST["booking_id"]]);
-    if ($stmt->rowCount() > 0) {
+    $booking_rowCount = $stmt->rowCount();
+    $stmt = $conn->prepare("UPDATE rooms SET status = 'Unavailable' WHERE room_id = ?");
+    $stmt->execute([$_POST["room_id"]]);
+    $room_rowCount = $stmt->rowCount();
+    if ($booking_rowCount > 0 && $room_rowCount > 0) {
         $success = "booking approved";
         $all_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number,date_format(b.booking_date, '%M %d, %Y') as booking_date, b.status from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) order by b.booking_date desc", '', $conn);
-        $all_pending_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number,date_format(b.booking_date, '%M %d, %Y') as booking_date from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) where b.status =  ? order by b.booking_date desc", 'Pending', $conn);
+        $all_pending_bookings = fetchAllDetails("SELECT b.booking_id,s.name,r.room_number, r.room_id,date_format(b.booking_date, '%M %d, %Y') as booking_date from bookings b INNER JOIN students s USING(student_id) INNER JOIN rooms r USING(room_id) where b.status =  ? order by b.booking_date desc", 'Pending', $conn);
     } else {
         $error = "there was an error approving the booking";
     }
@@ -95,6 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
                                         <div class="action">
                                             <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
                                                 <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
+                                                <input type="hidden" name="room_id" value="<?= htmlspecialchars($pending_booking["room_id"]) ?>">
                                                 <button class="approve" name="approve">Approve</button>
                                             </form>
                                             <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
@@ -110,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
                 </div>
             <?php endif ?>
         </div>
-        <div class="recent card">
+        <div class="recent card all-booking-card">
             <h1>All Bookings</h1>
             <?php if(empty($all_bookings)): ?>
                 <p>No bookings.</p>
@@ -153,6 +158,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
                 </div>
             <?php endif ?>
         </div>
+        <footer>
+             <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+        </footer>
     </div>
 </body>
 

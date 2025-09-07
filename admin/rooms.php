@@ -122,8 +122,7 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
                         <select name="room_status" id="room_status">
                             <option value=""></option>
                             <option value="Available">Available</option>
-                            <option value="Not Available">Not Available</option>
-                            <option value="Maintenance">Maintenance</option>
+                            <option value="Unavailabe">Not Available</option>
                         </select>
                     </label>
                     <label for="Rent Fee">

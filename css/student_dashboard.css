@@ -13,8 +13,9 @@
     border-radius: 10px;
 }
 .student-dashboard .container {
-    width: 98%;
+    width: 100%;
     height: 100%;
+    padding-right: 10px;
     display: grid;
     gap: 20px;
     grid-template-areas: "info info room"
@@ -85,41 +86,84 @@
 .student-dashboard .room .room-container-none button:hover {
     background-color: var(--indigo);
 }
-
-
-.student-dashboard .payment {
-    grid-area: payment;
-}
-
-.student-dashboard .payment .payment-container-none {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 70%;
-}
-
-.student-dashboard .payment .payment-container-none p {
-    color: #6b7280;
-}
-
-.student-dashboard .payment .payment-container-none button {
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    background-color: #2563eb;
+.recent {
+    margin-top: 2rem;
+    padding: 15px;
     border-radius: 10px;
-    cursor: pointer;
-    font-size: 15px;
+    width: 100%;
+    grid-area: payment;
+    overflow: hidden;
+}
+.card{
+    box-shadow: 0px 2px 5px rgb(0, 0,0, 0.2);
+    border-radius: 10px;
+    background-color: white;
+    padding: 10px;
+    padding-left: 15px;
+    margin-right: 20px;
 }
 
-.student-dashboard .payment .payment-container-none button:hover {
-    background-color: var(--indigo);
+.recent h1 {
+    font-size: 20px;
+    padding-bottom: 20px;
 }
+.table-container {
+        overflow: auto;
+    width: 100%;
+    position: relative;
+    margin-bottom: 20px;
+    border-radius: 10px;
+}
+
+.table-container table {
+    width: 100%;
+    text-align: left;
+    border-radius: 10px;
+    border: 1px solid #e6e8ec;
+    border-collapse: collapse;
+}
+
+.recent th {
+    background-color: #f9fafb;
+    border-bottom: 1px solid #e6e8ec;
+    padding: 10px;
+    color: #4b5563;
+}
+
+.recent td {
+    padding: 0px 10px;
+    border-bottom: 1px solid #e6e8ec;
+    color: #374151;
+
+}
+.table-container .pending,.approved,.rejected{
+    border-radius: 10px;
+    text-align: center;
+    max-width: 60%;
+}
+.table-container .pending{
+    background-color: #ffe28a;
+    color: rgb(209, 138, 6);
+}
+.table-container .approved{
+    color: green;
+    background-color: #bcfcc9;
+}
+.table-container .rejected{
+    color: #ef4444;
+    background-color: #fcbcbc;
+}
+
+
 
 @media screen and (max-width:967px) {
     .student-dashboard{
         margin-left: 0;
+    }
+    .table-container .pending,.approved,.rejected{
+        border-radius: 10px;
+        text-align: center;
+        max-width: 100%;
     }
 }
 

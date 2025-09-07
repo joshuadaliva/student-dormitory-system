@@ -16,7 +16,7 @@ if (isset($_SESSION["user_type"])) {
 
 
 // FETCH ALL ROOMS
-$stmt = $conn->prepare("SELECT * from rooms where status = 'Available' order by created_at desc");
+$stmt = $conn->prepare("SELECT * from rooms order by created_at desc");
 $stmt->execute();
 $allRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -80,10 +80,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
                                 <p class="description"><?= htmlspecialchars($rooms["description"]) ?></p>
                                 <div class="books-rent-btn">
                                     <p class="pay-isavaible"><?= htmlspecialchars($rooms["rent_fee"])  . " /month <br> " . htmlspecialchars($rooms["status"])  ?> </p>
-                                    <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                                        <input type="hidden" name="room_id" value="<?= $rooms["room_id"] ?>">
-                                        <button type="submit" name="add_bookings">Book Now</button>
-                                    </form>
+                                    <?php if($rooms["status"] === "Available"): ?>
+                                        <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                                            <input type="hidden" name="room_id" value="<?= $rooms["room_id"] ?>">
+                                            <button type="submit" name="add_bookings">Book Now</button>
+                                        </form>
+                                    <?php endif ?>
                                 </div>
                             </div>
                         <?php endforeach ?>

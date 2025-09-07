@@ -26,6 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["approve"])) {
     if ($stmt->rowCount() > 0) {
         $success = "payment approved";
         $all_pending_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, r.room_number, date_format(p.payment_date, '%M,%d%Y') as date_payment FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) where p.status = ? order by p.payment_date desc", 'Pending', $conn);
+        $all_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, date_format(p.payment_date, '%M,%d%Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) order by p.payment_date desc", "" , $conn);
+
     } else {
         $error = "there was an error approving the payment";
     }
@@ -36,6 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
     $stmt->execute([$_POST["payment_id"]]);
     if ($stmt->rowCount() > 0) {
         $success = "payment Rejected";
+        $all_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, date_format(p.payment_date, '%M,%d%Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) order by p.payment_date desc", "" , $conn);
         $all_pending_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, r.room_number, date_format(p.payment_date, '%M,%d%Y') as date_payment FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) where p.status = ? order by p.payment_date desc", 'Pending', $conn);
     } else {
         $error = "there was an error rejecting the booking";
@@ -111,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
         <div class="recent card">
             <h1>All Payments</h1>
             <?php if(empty($all_payments)): ?>
-                <p>No bookings.</p>
+                <p>No payments.</p>
             <?php endif ?>
             <?php if ($all_payments): ?>
                 <div class="container-table">
@@ -154,6 +157,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
                 </div>
             <?php endif ?>
         </div>
+        <footer>
+            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+        </footer>
     </div>
 </body>
 </html>

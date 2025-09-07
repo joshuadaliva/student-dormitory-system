@@ -71,30 +71,26 @@
 .admin-dashboard .recent td{
     border-bottom: 1px solid #e6e8ec;
     color: #374151;
-    padding-right: 10px;
-    padding-left: 2px;
+    padding: 0px 10px;
 
+}
+.container-table .pending, .approved, .rejected{
+    padding: 5px 10px;
+    text-align: center;
+    border-radius: 10px;
+    max-width: 60% ;
 }
 .container-table .pending{
     background-color: #ffe28a;
     color: rgb(209, 138, 6);
-    padding: 5px 10px;
-    text-align: center;
-    border-radius: 10px;
 }
 .container-table .approved{
     color: green;
     background-color: #bcfcc9;
-    padding: 5px 10px;
-    text-align: center;
-    border-radius: 10px;
 }
 .container-table .rejected{
     color: #ef4444;
     background-color: #fcbcbc;
-    padding: 5px 10px;
-    text-align: center;
-    border-radius: 10px;
 }
 footer {
     background-color: #111827;
@@ -106,6 +102,9 @@ footer {
 @media screen and (max-width:956px) {
     .admin-dashboard{
         margin-left: 0;
+    }
+    .container-table .pending, .approved, .rejected{
+        max-width: 100% ;
     }
 }
 @media screen and (max-width:796px) {
