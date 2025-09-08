@@ -2,6 +2,7 @@
     margin-left: 250px;
     padding: 0px 20px;
     width: 100%;
+    
 }
 .admin-dashboard .success-login{
     background-color: #bcfcc9;
@@ -102,6 +103,9 @@ footer {
 @media screen and (max-width:956px) {
     .admin-dashboard{
         margin-left: 0;
+        padding: 0;
+        margin-top: 5rem;
+        padding-right: 20px;
     }
     .container-table .pending, .approved, .rejected{
         max-width: 100% ;

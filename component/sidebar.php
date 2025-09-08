@@ -47,14 +47,19 @@
         position: fixed;
         top: 0;
         left: 0;
-
+        transition-duration: 1s;
+        z-index: 999;
 
     }
 
-    .sidebar h1 {
+    .sidebar .header h1 {
         font-size: 25px;
         color: #1d4ed8;
         text-align: center;
+        width: 100%;
+    }
+    .sidebar .close-btn{
+        display: none;
     }
 
     .sidebar .user {
@@ -63,6 +68,11 @@
         font-size: 15px;
         text-align: center;
         margin: 40px 0px;
+    }
+    .sidebar .header{
+        display: flex;
+        text-align: center;
+        width: 100%;
     }
 
     .sidebar .bottom-links {
@@ -113,9 +123,48 @@
         text-decoration: none;
         color: white;
     }
+
+    nav{
+        display: none;
+        gap: 20px;
+        align-items: center;
+        box-shadow: 0px 0px 5px rgb(0, 0, 0,  0.5);
+        margin: 0;
+        padding: 5px 30px;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        background-color: white;
+        
+    }
+    .nav-title{
+        font-size: 1.2rem;
+        background: linear-gradient(to right, #6366f1 , #a855f7);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-weight: bold;
+
+    }
+    
     @media screen and (max-width : 967px) {
         .sidebar{
-            display: none;
+            transform: translate(-100%);
+        }
+        .sidebar-open{
+            transform: translate(0%);
+            
+        }
+        .sidebar .close-btn{
+            display: block;
+            font-size: 15px;
+            position: absolute;
+            top: 0;
+            right: 10px;
+        }
+        nav{
+            display: flex;
         }
         body{
             display: block;
@@ -126,7 +175,10 @@
 </head>
 <body>
     <div class="sidebar">
-        <h1>dormitory system</h1>
+        <div class="header">
+            <h1>dormitory system</h1>
+            <button class="close-btn">&#88;</button>
+        </div>
         <hr color="#e6e8ec" size="1">
         <p class="user"><?= htmlspecialchars("Welcome! ". $_SESSION["name"]) ?></p>
         <div class="bottom-links">
@@ -150,5 +202,23 @@
             <button><a href="../process/logout.php">Logout</a></button>
         </div>
     </div>
+    <nav>
+        <button class="hamburger">&#9776;</button>
+        <h1 class="nav-title">DORMITORY SYSTEM</h1>
+    </nav>
+
+
+    <script>
+        let btn = document.querySelector(".hamburger");
+        let sidebar = document.querySelector(".sidebar");
+        let closeBtn = document.querySelector(".close-btn");
+        btn.addEventListener("click", () => {
+            sidebar.classList.toggle("sidebar-open");
+        })
+        closeBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("sidebar-open");
+        })
+
+    </script>
 </body>
 </html>

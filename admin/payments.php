@@ -33,15 +33,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["approve"])) {
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
-    $stmt = $conn->prepare("UPDATE payments SET status = 'Rejected' WHERE payment_id = ?");
-    $stmt->execute([$_POST["payment_id"]]);
-    if ($stmt->rowCount() > 0) {
-        $success = "payment Rejected";
-        $all_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, date_format(p.payment_date, '%M,%d%Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) order by p.payment_date desc", "" , $conn);
-        $all_pending_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, r.room_number, date_format(p.payment_date, '%M,%d%Y') as date_payment FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) where p.status = ? order by p.payment_date desc", 'Pending', $conn);
-    } else {
-        $error = "there was an error rejecting the booking";
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_payment_rejection"])) {
+    if(empty($_POST["notes"])){
+        $error = "notes cannot be empty";
+    }
+    else{
+        $notes = sanitizeInput($_POST["notes"]);
+        $stmt = $conn->prepare("UPDATE payments SET status = 'Rejected', notes = ? WHERE payment_id = ?");
+        $stmt->execute([$notes,$_POST["payment_id"] ]);
+        if ($stmt->rowCount() > 0) {
+            $success = "payment Rejected";
+            $all_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, date_format(p.payment_date, '%M,%d%Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) order by p.payment_date desc", "" , $conn);
+            $all_pending_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, r.room_number, date_format(p.payment_date, '%M,%d%Y') as date_payment FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) where p.status = ? order by p.payment_date desc", 'Pending', $conn);
+        } else {
+            $error = "there was an error rejecting the booking";
+        }
     }
 }
 
@@ -59,6 +65,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
 </head>
 <body>
     <?php require_once "../component/sidebar.php" ?>
+    <div class="overlay-modal">
+        <div class="modal">
+            <button class="close-modal">&#88;</button>
+            <h1>REASON OF REJECTING PAYMENT</h1>
+            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                <input type="hidden" name="payment_id" class="payment-id">
+                <textarea name="notes" class="reason-input" id="reason" placeholder="enter your reason for rejecting payment"></textarea><br><br>
+                <button name="confirm_payment_rejection" class="confirm-reject-btn" value="confirm rejection"> CONFIRM REJECTION </button>
+            </form>
+        </div>
+    </div>
     <div class="container">
         <?php if (!empty($error)): ?>
             <p class="error-message"><?= htmlspecialchars($error) ?></p>
@@ -98,10 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
                                                 <input type="hidden" name="payment_id" value="<?= htmlspecialchars($pending_payment["payment_id"]) ?>">
                                                 <button class="approve" name="approve">Approve</button>
                                             </form>
-                                            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                                                <input type="hidden" name="payment_id" value="<?= htmlspecialchars($pending_payment["payment_id"]) ?>">
-                                                <button class="reject" name="reject">Reject</button>
-                                            </form>
+                                            <button class="reject-btn" name="reject-btn" id="reject-btn" data-id="<?= $pending_payment['payment_id'] ?>">Reject</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -161,5 +175,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["reject"])) {
             <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
         </footer>
     </div>
+    <script>
+        let rejectBtn = document.querySelectorAll(".reject-btn");
+        let overlayModal = document.querySelector(".overlay-modal");
+        let rejectInputId = document.querySelector(".payment-id");
+        let closeModal = document.querySelector(".close-modal");
+        rejectBtn.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const id = e.target.dataset.id;
+                rejectInputId.value = id;
+                overlayModal.classList.toggle("open-modal");
+                closeModal.addEventListener("click", () => {
+                    overlayModal.classList.remove("open-modal");
+                })
+            })
+        })
+        
+    </script>
 </body>
 </html>
