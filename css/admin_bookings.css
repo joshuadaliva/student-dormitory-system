@@ -50,11 +50,16 @@
     color: #374151;
 
 }
+.recent tr:hover {
+    cursor: pointer;
+    background-color: rgb(247, 247, 247);
+
+}
 .recent .action{
     display: flex;
     gap: 10px;
 }
-.action .approve, .reject{
+.action .approve, .reject-btn{
     cursor: pointer;
     border: none;
     border-radius: 10px;
@@ -65,15 +70,21 @@
 .action .approve{
     background-color:  #22c55e;
 }
-.action .reject{
+.action .approve:hover{
+    background-color:  #1c9c4b;
+}
+.action .reject-btn{
     background-color:  #ef4444;
 
 }
-.container-table .pending, .approved, .rejected{
+.action .reject-btn:hover{
+    background-color:  #ce3939;
+
+}
+.container-table .pending, .approved, .rejected, .checkout{
     padding: 5px 10px;
     text-align: center;
     border-radius: 10px;
-    max-width: 60%;
 }
 .container-table .pending{
     background-color: #ffe28a;
@@ -86,6 +97,11 @@
 .container-table .rejected{
     color: #ef4444;
     background-color: #fcbcbc;
+}
+.container-table .checkout{
+    color:rgb(102, 101, 101);
+    text-decoration: line-through;
+    background-color:#e3e9f7d5;
 }
 .error-message{
     padding: 10px;
@@ -170,4 +186,19 @@ footer {
 }
 .open-modal{
     display: flex;
+}
+.close-modal-bookings, .confirm-checkout-btn{
+    cursor: pointer;
+    padding: 10px 10px;
+    color: white;
+    border: none;
+    border-radius: 10px;
+
+    
+}
+.close-modal-bookings{
+    background-color: #6b7280;
+}
+.confirm-checkout-btn{
+    background-color:#f51818;
 }

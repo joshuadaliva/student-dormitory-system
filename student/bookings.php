@@ -27,7 +27,7 @@ $booking_details = fetchAllDetails("SELECT r.room_number , r.roomType,date_forma
 $error = "";
 $success = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
-    $is_student_book_room = countWhereAllRows("SELECT booking_id from bookings where student_id = ? and status != 'Rejected'", $_SESSION["student_id"]);
+    $is_student_book_room = countWhereAllRows("SELECT booking_id from bookings where student_id = ? and status != 'Rejected' and status != 'Checkout'", $_SESSION["student_id"]);
     if (empty($is_student_book_room)) {
         $stmt = $conn->prepare("INSERT INTO bookings(student_id,room_id,status) values(?,?, 'Pending');");
         $stmt->execute([$_SESSION["student_id"], $_POST["room_id"]]);

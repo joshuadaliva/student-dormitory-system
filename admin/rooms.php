@@ -14,16 +14,11 @@ if (isset($_SESSION["user_type"])) {
     header("Location: " . "./login.php");
 }
 
-
-$stmt  = $conn->prepare("SELECT room_number,roomType,status,rent_fee from rooms");
-$stmt->execute();
-$room_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
+$room_list = fetchAllDetails("SELECT room_id, room_number,roomType,status,rent_fee from rooms", "", $conn);
 
 $error = "";
 $success = "";
-if($_SERVER['REQUEST_METHOD'] === "POST"){
+if($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["submit"])){
 
     if(empty($_POST["room_number"]) || empty($_POST["room_type"]) || empty($_POST["room_status"]) || empty($_POST["rent"]) ||empty($_POST["description"])){
         $error = "all inputs cannot be blank";
@@ -58,6 +53,7 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
                 
                 if($stmt->rowCount() > 0){
                     $success = "room added successfully";
+                    $room_list = fetchAllDetails("SELECT room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
                 }
                 else{
                     $error = "room not added";
@@ -70,11 +66,29 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
     }
 
 
-    
-
-
 }
 
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_delete"])) {
+    $room_id = sanitizeInput($_POST["room_id"]);
+    $is_student_pending_payment = fetchDetails("SELECT room_id from rooms WHERE room_id = ? and status = 'Unavailable'", $room_id, $conn);
+    if($is_student_pending_payment){
+        $error = "cannot delete room, room occupied";
+    }
+    else{
+        $stmt = $conn->prepare("DELETE from rooms where room_id = ?");
+        $stmt -> execute([$room_id]);
+        $room_row_count = $stmt->rowCount();
+        if($room_row_count > 0){
+            $success = "room deleted";
+            $room_list = fetchAllDetails("SELECT room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+        }
+        else{
+            $error = "cannot delete room, please try again later";
+            $room_list = fetchAllDetails("SELECT room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+        }
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -92,7 +106,19 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
 
 <body>
     <?php require_once "../component/sidebar.php" ?>
-    <div class="rooms-panel">
+        <div class="overlay-modal">
+            <div class="modal">
+                <h1>DO YOU WANT TO DELETE THIS ROOM?</h1>
+                <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                    <input type="hidden" name="room_id" class="room-id">
+                    <div style="display: flex; gap:10px">
+                        <button class="close-modal-bookings">CLOSE MODAL</button>
+                        <button name="confirm_delete" class="confirm-delete-btn"> DELETE ROOM </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="rooms-panel">
         <h1>Manage Rooms</h1>
         <div class="container">
             <h1>Add New Room</h1>
@@ -138,7 +164,7 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
                     Pick image:
                     <input type="file" name="file" id="image">
                 </label><br><br>
-                <input type="submit" class="submit" value="Add Room">
+                <input type="submit" name="submit" class="submit" value="Add Room">
             </form>
         </div>
         <div class="room-list container">
@@ -158,10 +184,10 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
                             <td><?= htmlspecialchars($room["roomType"]) ?></td>
                             <td><?= htmlspecialchars($room["rent_fee"]) ?></td>
                             <td><?= htmlspecialchars($room["status"]) ?></td>
-                            <th>
+                            <td>
                                 <button class="edit">EDIT</button>
-                                <button class="delete">DELETE</button>
-                            </th>
+                                <button class="delete" data-id="<?= htmlspecialchars($room["room_id"]) ?>">DELETE</button>
+                            </td>
                         </tr>
                     <?php endforeach?>
                 </table>
@@ -171,6 +197,24 @@ if($_SERVER['REQUEST_METHOD'] === "POST"){
             <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
         </footer>
     </div>
+    <script>
+        let deleteBtn = document.querySelectorAll(".delete");
+        let overlayModal = document.querySelector(".overlay-modal");
+        let room_id = document.querySelector(".room-id");
+        let closeModal = document.querySelector(".close-modal-bookings");
+        deleteBtn.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const roomID = e.target.dataset.id;
+                console.log(roomID);
+                room_id.value = roomID;
+                overlayModal.classList.toggle("open-modal");
+                closeModal.addEventListener("click", () => {
+                    overlayModal.classList.remove("open-modal");
+                })
+            })
+        })
+        
+    </script>
 </body>
 
 </html>

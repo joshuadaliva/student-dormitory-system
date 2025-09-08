@@ -75,11 +75,15 @@
     padding: 0px 10px;
 
 }
-.container-table .pending, .approved, .rejected{
+.admin-dashboard .recent tr:hover {
+    cursor: pointer;
+    background-color: rgb(247, 247, 247);
+
+}
+.container-table .pending, .approved, .rejected, .checkout{
     padding: 5px 10px;
     text-align: center;
     border-radius: 10px;
-    max-width: 60% ;
 }
 .container-table .pending{
     background-color: #ffe28a;
@@ -92,6 +96,11 @@
 .container-table .rejected{
     color: #ef4444;
     background-color: #fcbcbc;
+}
+.container-table .checkout{
+    color:rgb(102, 101, 101);
+    text-decoration: line-through;
+    background-color:#e3e9f7d5;
 }
 footer {
     background-color: #111827;

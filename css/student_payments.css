@@ -129,6 +129,11 @@ footer {
     color: #374151;
 
 }
+.recent tr:hover {
+    cursor: pointer;
+    background-color: rgb(247, 247, 247);
+
+}
 .table-container .pending,.approved,.rejected{
     border-radius: 10px;
     text-align: center;

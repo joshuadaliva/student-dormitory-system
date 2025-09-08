@@ -122,6 +122,11 @@
                                                 <p class="rejected"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
                                             </td>
                                         <?php endif ?>
+                                        <?php if ($recent_booking["status"] == "Checkout"): ?>
+                                            <td>
+                                                <p class="checkout"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
                                     </tr>
                                 <?php endforeach?>
                         </table>
