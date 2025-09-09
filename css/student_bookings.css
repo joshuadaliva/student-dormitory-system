@@ -176,6 +176,10 @@ footer {
     color: #ef4444;
     background-color: #fcbcbc;
 }
+.container-table .checkout{
+    color: #ffffff;
+    background-color:  #6b7280;
+}
 .error-message{
     padding: 10px;
     margin: 15px 5px;

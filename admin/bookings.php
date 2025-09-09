@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["approve"])) {
     $stmt = $conn->prepare("UPDATE bookings SET status = 'Approved' WHERE booking_id = ?");
     $stmt->execute([$_POST["booking_id"]]);
     $booking_rowCount = $stmt->rowCount();
-    $stmt = $conn->prepare("UPDATE rooms SET status = 'Unavailable' WHERE room_id = ?");
+    $stmt = $conn->prepare("UPDATE rooms SET status = 'Occupied' WHERE room_id = ?");
     $stmt->execute([$_POST["room_id"]]);
     $room_rowCount = $stmt->rowCount();
     if ($booking_rowCount > 0 && $room_rowCount > 0) {

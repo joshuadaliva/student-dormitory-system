@@ -135,6 +135,18 @@ footer {
         max-width: 100%;
     }
 }
+.checkout-student{
+    background-color:#3b82f6 ;
+    padding: 6px 15px;
+    border-radius: 10px;
+    font-size: 15px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+.checkout-student:hover{
+    background-color:#2e75e7 ;
+}
 .overlay-modal{
     position: fixed;
     left: 0;

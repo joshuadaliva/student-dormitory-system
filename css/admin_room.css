@@ -30,24 +30,24 @@
     padding: 20px;
 }
 
-.container form {
+form {
     padding: 10px;
 }
 
-.container form .form-divide {
+form .form-divide {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
-.container form input {
+form input {
     padding: 10px;
     border: 1px solid #e5e7eb;
     width: 100%;
     border-radius: 10px;
 }
 
-.container form select {
+form select {
     padding: 10px;
     width: 100%;
 }
@@ -57,27 +57,27 @@
     margin-top: 30px;
 }
 
-.container form .submit {
+form .submit {
     background-color: #2563eb;
     color: white;
     cursor: pointer;
     transition-duration: 1s;
 }
 
-.container .form .submit:hover {
+.form .submit:hover {
     transform: scale(2);
 }
-.container .edit, .delete{
+.edit, .delete{
     color: white;
     border: none;
     border-radius: 10px;
     padding: 10px 20px;
     cursor: pointer;
 }
-.container .edit{
+.edit{
     background-color: orange;
 }
-.container .delete{
+.delete{
     background-color: #ef4444;
 }
 
@@ -142,7 +142,7 @@ footer {
     color: white;
     margin-top: 4rem;
 }
-.overlay-modal{
+.overlay-modal, .overlay-modal-edit{
     position: fixed;
     left: 0;
     top: 0;
@@ -154,7 +154,7 @@ footer {
     background-color: rgba(0, 0, 0, 0.603);
     display: none;
 }
-.modal{
+.modal, .modal-edit{
     padding: 20px;
     height: auto;
     background-color: white;
@@ -165,7 +165,7 @@ footer {
     border-radius: 10px;
     position: relative;
 }
-.modal h1{
+.modal h1 ,.modal-edit h1{
     font-size: 15px;
     margin-top: 20px;
 }
@@ -194,7 +194,7 @@ footer {
 .open-modal{
     display: flex;
 }
-.close-modal-bookings, .confirm-delete-btn{
+.close-modal-bookings, .confirm-delete-btn, .close-modal-edit{
     cursor: pointer;
     padding: 10px 10px;
     color: white;
@@ -203,7 +203,7 @@ footer {
 
     
 }
-.close-modal-bookings{
+.close-modal-bookings, .close-modal-edit{
     background-color: #6b7280;
 }
 .confirm-delete-btn{

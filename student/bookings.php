@@ -16,7 +16,7 @@ if (isset($_SESSION["user_type"])) {
 
 
 // FETCH ALL ROOMS
-$stmt = $conn->prepare("SELECT * from rooms order by created_at desc");
+$stmt = $conn->prepare("SELECT * from rooms where status = 'Available' order by created_at desc");
 $stmt->execute();
 $allRooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -35,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
         if ($rowCount > 0) {
             $success = "room booked , status pending";
             $booking_details = fetchAllDetails("SELECT r.room_number , r.roomType, b.booking_date, b.status, r.description, r.imagePath, r.rent_fee FROM rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students USING(student_id) WHERE student_id = ? order by b.booking_date desc", $_SESSION["student_id"], $conn);
+        
         }
     } else {
         $error = "you currently booked a room";
@@ -113,6 +114,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
                             <?php endif ?>
                             <?php if ($booking_detail["status"] == "Rejected"): ?>
                                 <p class="status rejected"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
+                            <?php endif ?>
+                            <?php if ($booking_detail["status"] == "Checkout"): ?>
+                                <p class="status checkout"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
                             <?php endif ?>
                         </div>
                     <?php endforeach ?>
