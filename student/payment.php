@@ -25,17 +25,23 @@ $success = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
     $is_student_payment_exist = countWhereAllRows("SELECT p.payment_id FROM payments p WHERE p.student_id = ? and p.status = 'Pending'", $_SESSION["student_id"]);
-    if (empty($is_student_payment_exist)) {
-        $stmt = $conn->prepare("INSERT INTO payments(student_id,booking_id, amount ,status) values(?,? ,?,'Pending');");
-        $stmt->execute([$_SESSION["student_id"], $_POST["booking_id"], $_POST["rent_fee"]]);
-        $rowCount = $stmt->rowCount();
-        if ($rowCount > 0) {
-            $success = "payment created , status pending";
-            $payment_details = fetchDetails("SELECT r.room_number, r.roomType, b.booking_id, r.rent_fee from rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students s USING(student_id) WHERE b.status = 'Approved' and s.student_id = ?", $_SESSION["student_id"], $conn);
-            $all_payments = fetchAllDetails("SELECT p.payment_id, r.room_id, p.amount, date_format(p.payment_date, '%M,%d %Y') as payment_date , p.notes, p.status FROM payments p INNER JOIN bookings b USING(booking_id) INNER JOIN rooms r USING(room_id) WHERE p.student_id = ? order by p.payment_date desc", $_SESSION["student_id"], $conn);
+    $is_student_paid_this_month = countWhereAllRows("SELECT COUNT(*) as total FROM payments WHERE student_id = ? and month(payment_date) and year(payment_date) and status = 'Approved'", $_SESSION["student_id"]);
+    if($is_student_paid_this_month){
+        $error = "you already paid this month";
+    }
+    else{
+        if (empty($is_student_payment_exist)) {
+            $stmt = $conn->prepare("INSERT INTO payments(student_id,booking_id, amount ,status) values(?,? ,?,'Pending');");
+            $stmt->execute([$_SESSION["student_id"], $_POST["booking_id"], $_POST["rent_fee"]]);
+            $rowCount = $stmt->rowCount();
+            if ($rowCount > 0) {
+                $success = "payment created , status pending";
+                $payment_details = fetchDetails("SELECT r.room_number, r.roomType, b.booking_id, r.rent_fee from rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students s USING(student_id) WHERE b.status = 'Approved' and s.student_id = ?", $_SESSION["student_id"], $conn);
+                $all_payments = fetchAllDetails("SELECT p.payment_id, r.room_id, p.amount, date_format(p.payment_date, '%M,%d %Y') as payment_date , p.notes, p.status FROM payments p INNER JOIN bookings b USING(booking_id) INNER JOIN rooms r USING(room_id) WHERE p.student_id = ? order by p.payment_date desc", $_SESSION["student_id"], $conn);
+            }
+        } else {
+            $error = "you currently have pending payment";
         }
-    } else {
-        $error = "you currently have pending payment";
     }
 }
 

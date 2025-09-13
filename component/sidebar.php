@@ -187,7 +187,7 @@
                     <a href="../student/dashboard.php">Dashboard</a>
                     <a href="../student/bookings.php">My Bookings</a>
                     <a href="../student/payment.php">My Payments</a>
-                    <a href="">Profile</a>
+                    <a href="../student/profile.php">Profile</a>
                 </div>
             <?php endif ?>
             <?php if($_SESSION["user_type"] === "admin"): ?>
@@ -196,7 +196,7 @@
                     <a href="../admin/bookings.php">Bookings</a>
                     <a href="../admin/payments.php">Payments</a>
                     <a href="../admin/rooms.php">Rooms</a>
-                    <a href="../admin/reports.php">Reports</a>
+                    <a href="../admin/report.php">Reports</a>
                 </div>
             <?php endif ?>
             <button><a href="../process/logout.php">Logout</a></button>

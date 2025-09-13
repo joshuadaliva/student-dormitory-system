@@ -70,59 +70,103 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["edit_form"])) {
     $rent = sanitizeInput($_POST["rent"]);
     $description = sanitizeInput($_POST["description"]);
 
-    $is_occupied = fetchDetails("SELECT room_id from rooms where room_id = ? and status = 'Occupied'", $room_id, $conn);
-
-    
-
+    $is_occupied = fetchDetails("SELECT r.room_id from bookings b inner JOIN rooms r USING (room_id) where b.status = 'Approved' and r.status = 'Occupied' and room_id = ?", $room_id, $conn);
     if (empty($_POST["room_number"]) || empty($_POST["room_type"]) || empty($_POST["room_status"]) || empty($_POST["rent"]) || empty($_POST["description"])) {
         $error = "all inputs cannot be blank";
-    }elseif($is_occupied){
-        $error = "room is occupied, nice try ";
     }
 
-    
-    if (empty($error)) {
-        if ($_FILES["file"]["error"] === UPLOAD_ERR_NO_FILE) {
-            $stmt = $conn->prepare("SELECT room_number from rooms where room_number = ?");
-            $stmt->execute([$room_number]);
-            $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
-            if ($is_room_number_exist) {
-                $error = "room number exist, try another room number" ;
-            } else {
-                $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, description = ?, rent_fee = ?, status = ? where room_id = ?");
-                $stmt->execute([$room_number, $room_type, $description, $rent, $room_status, $room_id]);
-                if ($stmt->rowCount() > 0) {
-                    $success = "room updated";
-                    $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
-                } else {
-                    $error = "error updating the room";
-                }
-            }
-        } else {
-            $file = uploadImage($_FILES);
-            if (isset($file["error"])) {
-                $error = $file["error"];
-            } elseif (isset($file["success"])) {
+    if($is_occupied){
+        if (empty($error)) {
+            if ($_FILES["file"]["error"] === UPLOAD_ERR_NO_FILE) {
                 $stmt = $conn->prepare("SELECT room_number from rooms where room_number = ?");
                 $stmt->execute([$room_number]);
                 $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
-    
                 if ($is_room_number_exist) {
-                    $error = "room number exist, try another room number";
+                    $error = "room number exist, try another room number" ;
                 } else {
-                    $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, status = ?, rent_fee = ?, description = ?, imagePath = ? where room_id = ?");
-                    $stmt->execute([$room_number, $room_type, $room_status, $rent, $description, $file["file"]]);
-    
+                    $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, description = ?, rent_fee = ? where room_id = ?");
+                    $stmt->execute([$room_number, $room_type, $description, $rent, $room_id]);
                     if ($stmt->rowCount() > 0) {
-                        $success = "room update";
+                        $success = "room updated";
+                        $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,rent_fee, status from rooms", null, $conn);
+                    } else {
+                        $error = "error updating the room";
+                    }
+                }
+            } else {
+                $file = uploadImage($_FILES);
+                if (isset($file["error"])) {
+                    $error = $file["error"];
+                } elseif (isset($file["success"])) {
+                    $stmt = $conn->prepare("SELECT room_number from rooms where room_number = ?");
+                    $stmt->execute([$room_number]);
+                    $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
+        
+                    if ($is_room_number_exist) {
+                        $error = "room number exist, try another room number";
+                    } else {
+                        $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, status = ?, rent_fee = ?, description = ?, imagePath = ? where room_id = ?");
+                        $stmt->execute([$room_number, $room_type, $room_status, $rent, $description, $file["file"]]);
+        
+                        if ($stmt->rowCount() > 0) {
+                            $success = "room update";
+                            $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+                        } else {
+                            $error = "error updating the room";
+                        }
+                    }
+                }
+                
+            }
+        }
+    }
+    else if($room_status === "Available" || $room_status === "Unavailable"){
+        if (empty($error)) {
+            if ($_FILES["file"]["error"] === UPLOAD_ERR_NO_FILE) {
+                $stmt = $conn->prepare("SELECT room_number from rooms where room_number = ?");
+                $stmt->execute([$room_number]);
+                $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
+                if ($is_room_number_exist) {
+                    $error = "room number exist, try another room number" ;
+                } else {
+                    $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, description = ?, rent_fee = ?, status = ? where room_id = ?");
+                    $stmt->execute([$room_number, $room_type, $description, $rent, $room_status, $room_id]);
+                    if ($stmt->rowCount() > 0) {
+                        $success = "room updated";
                         $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
                     } else {
                         $error = "error updating the room";
                     }
                 }
+            } else {
+                $file = uploadImage($_FILES);
+                if (isset($file["error"])) {
+                    $error = $file["error"];
+                } elseif (isset($file["success"])) {
+                    $stmt = $conn->prepare("SELECT room_number from rooms where room_number = ?");
+                    $stmt->execute([$room_number]);
+                    $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
+        
+                    if ($is_room_number_exist) {
+                        $error = "room number exist, try another room number";
+                    } else {
+                        $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, rent_fee = ?, description = ?, imagePath = ? where room_id = ?");
+                        $stmt->execute([$room_number, $room_type, $rent, $description, $file["file"]]);
+        
+                        if ($stmt->rowCount() > 0) {
+                            $success = "room update";
+                            $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+                        } else {
+                            $error = "error updating the room";
+                        }
+                    }
+                }
+                
             }
-            
         }
+    }
+    else{
+        $error = "unable to update room with the room id of " . $room_number;
     }
 }
 
@@ -138,10 +182,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_delete"])) {
         $room_row_count = $stmt->rowCount();
         if ($room_row_count > 0) {
             $success = "room deleted";
-            $room_list = fetchAllDetails("SELECT room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+            $room_list = fetchAllDetails("SELECT  description, room_id, room_number,roomType,status,rent_fee from rooms", "", $conn);
         } else {
             $error = "cannot delete room, please try again later";
-            $room_list = fetchAllDetails("SELECT room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+            $room_list = fetchAllDetails("SELECT  description, room_id, room_number,roomType,status,rent_fee from rooms", "", $conn);
         }
     }
 }
@@ -197,7 +241,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_delete"])) {
                     </label>
                     <label for="status" id="label-status">
                         Status: <br>
-                        <select name="room_status" id="room_status">
+                        <select name="room_status" id="room_status1">
                             <option value=""></option>
                             <option value="Available">Available</option>
                             <option value="Unavailable">Not Available</option>
@@ -333,7 +377,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_delete"])) {
         let room_id_edit = document.getElementById("room-id-edit");
         let room_number = document.getElementById("room_number");
         let room_type = document.getElementById("room_type");
-        let room_status = document.getElementById("room_status");
+        let room_status = document.getElementById("room_status1");
         let label_status = document.getElementById("label-status");
         let description = document.getElementById("description");
         let rent = document.getElementById("rent");
@@ -342,14 +386,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_delete"])) {
             btn.addEventListener("click", (e) => {
                 console.log(btn);
                 if(e.target.dataset.status === "Occupied"){
+                    const newOption = document.createElement("option");
+                    newOption.value = e.target.dataset.status;
+                    room_status.appendChild(newOption);
+                    room_status.value = newOption.value;
                     room_status.style.display = "none";
                     label_status.style.display = "none";
                 }
                 else{
                     room_status.style.display = "block";
                     label_status.style.display = "block";
+                    room_status.value= e.target.dataset.status;
                 }
-                room_status.value = e.target.dataset.status;
                 description.value = e.target.dataset.description;
                 rent.value = e.target.dataset.rentfee;
                 room_number.value = e.target.dataset.roomnumber;

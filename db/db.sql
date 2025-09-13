@@ -28,6 +28,8 @@ create table rooms(
 );
 
 
+
+
 create table bookings(
     booking_id int PRIMARY KEY AUTO_INCREMENT,
     student_id int not null,
