@@ -1,6 +1,11 @@
+main{
+    display: flex;
+    flex:1;
+}
 .container {
     margin-left: 265px;
     width: 100%;
+    flex: 1;
 }
 
 .recent {

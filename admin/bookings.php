@@ -91,130 +91,132 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_checkout"])) 
 </head>
 
 <body>
-    <?php require_once "../component/sidebar.php" ?>
-    <div class="overlay-modal">
-        <div class="modal">
-            <h1>DO YOU WANT TO CHECKOUT THIS STUDENT</h1>
-            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                <input type="hidden" name="booking_id" class="booking-id">
-                <input type="hidden" name="room_id" class="room-id">
-                <div style="display: flex; gap:10px">
-                    <button class="close-modal-bookings">CLOSE MODAL</button>
-                    <button name="confirm_checkout" class="confirm-checkout-btn"> CHECKOUT STUDENT </button>
-                </div>
-            </form>
+    <main>
+        <?php require_once "../component/sidebar.php" ?>
+        <div class="overlay-modal">
+            <div class="modal">
+                <h1>DO YOU WANT TO CHECKOUT THIS STUDENT</h1>
+                <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                    <input type="hidden" name="booking_id" class="booking-id">
+                    <input type="hidden" name="room_id" class="room-id">
+                    <div style="display: flex; gap:10px">
+                        <button class="close-modal-bookings">CLOSE MODAL</button>
+                        <button name="confirm_checkout" class="confirm-checkout-btn"> CHECKOUT STUDENT </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="container">
-        <?php if (!empty($error)): ?>
-            <p class="error-message"><?= htmlspecialchars($error) ?></p>
-        <?php endif ?>
-        <?php if (!empty($success)): ?>
-            <p class="success-message"><?= htmlspecialchars($success) ?></p>
-        <?php endif ?>
-        <h1>Manage Bookings</h1>
-        <div class="recent card">
-            <h1>Pending Bookings</h1>
-            <?php if(empty($all_pending_bookings)): ?>
-                <p>No pending bookings.</p>
+        <div class="container">
+            <?php if (!empty($error)): ?>
+                <p class="error-message"><?= htmlspecialchars($error) ?></p>
             <?php endif ?>
-            <?php if ($all_pending_bookings): ?>
-                <div class="container-table">
-                    <table>
-                        <tr>
-                            <th>BOOKING ID</th>
-                            <th>STUDENT</th>
-                            <th>ROOM</th>
-                            <th>DATE</th>
-                            <th>ACTIONS</th>
-                        </tr>
+            <?php if (!empty($success)): ?>
+                <p class="success-message"><?= htmlspecialchars($success) ?></p>
+            <?php endif ?>
+            <h1>Manage Bookings</h1>
+            <div class="recent card">
+                <h1>Pending Bookings</h1>
+                <?php if(empty($all_pending_bookings)): ?>
+                    <p>No pending bookings.</p>
+                <?php endif ?>
+                <?php if ($all_pending_bookings): ?>
+                    <div class="container-table">
+                        <table>
+                            <tr>
+                                <th>BOOKING ID</th>
+                                <th>STUDENT</th>
+                                <th>ROOM</th>
+                                <th>DATE</th>
+                                <th>ACTIONS</th>
+                            </tr>
 
-                        
-                            <?php foreach ($all_pending_bookings as $pending_booking): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($pending_booking["booking_id"]) ?></td>
-                                    <td><?= htmlspecialchars($pending_booking["name"]) ?></td>
-                                    <td><?= htmlspecialchars($pending_booking["room_number"]) ?></td>
-                                    <td><?= htmlspecialchars($pending_booking["booking_date"]) ?></td>
-                                    <td>
-                                        <div class="action">
-                                            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                                                <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
-                                                <input type="hidden" name="room_id" value="<?= htmlspecialchars($pending_booking["room_id"]) ?>">
-                                                <button class="approve" name="approve">Approve</button>
-                                            </form>
-                                            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                                                <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
-                                                <button class="reject-btn" name="reject">Reject</button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                <tr>
+                            
+                                <?php foreach ($all_pending_bookings as $pending_booking): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($pending_booking["booking_id"]) ?></td>
+                                        <td><?= htmlspecialchars($pending_booking["name"]) ?></td>
+                                        <td><?= htmlspecialchars($pending_booking["room_number"]) ?></td>
+                                        <td><?= htmlspecialchars($pending_booking["booking_date"]) ?></td>
+                                        <td>
+                                            <div class="action">
+                                                <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                                                    <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
+                                                    <input type="hidden" name="room_id" value="<?= htmlspecialchars($pending_booking["room_id"]) ?>">
+                                                    <button class="approve" name="approve">Approve</button>
+                                                </form>
+                                                <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                                                    <input type="hidden" name="booking_id" value="<?= htmlspecialchars($pending_booking["booking_id"]) ?>">
+                                                    <button class="reject-btn" name="reject">Reject</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    <tr>
+                                    <?php endforeach ?>
+                                    </tr>
+                        </table>
+                    </div>
+                <?php endif ?>
+            </div>
+            <div class="recent card all-booking-card">
+                <h1>All Bookings</h1>
+                <?php if(empty($all_bookings)): ?>
+                    <p>No bookings.</p>
+                <?php endif ?>
+                <?php if ($all_bookings): ?>
+                    <div class="container-table">
+                        <table>
+                            <tr>
+                                <th>BOOKING ID</th>
+                                <th>STUDENT</th>
+                                <th>ROOM</th>
+                                <th>DATE</th>
+                                <th>STATUS</th>
+                                <th>CHECKOUT</th>
+                            </tr>
+                                <?php foreach ($all_bookings as $all_booking): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($all_booking["booking_id"]) ?></td>
+                                        <td><?= htmlspecialchars($all_booking["name"]) ?></td>
+                                        <td><?= htmlspecialchars($all_booking["room_number"]) ?></td>
+                                        <td><?= htmlspecialchars($all_booking["booking_date"]) ?></td>
+                                        <?php if ($all_booking["status"] == "Approved"): ?>
+                                            <td>
+                                                <p class="approved"> <?= htmlspecialchars($all_booking["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($all_booking["status"] == "Pending"): ?>
+                                            <td>
+                                                <p class="pending"> <?= htmlspecialchars($all_booking["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($all_booking["status"] == "Rejected"): ?>
+                                            <td>
+                                                <p class="rejected"> <?= htmlspecialchars($all_booking["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($all_booking["status"] == "Checkout"): ?>
+                                            <td>
+                                                <p class="checkout"> <?= htmlspecialchars($all_booking["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($all_booking["status"] != "Checkout" && $all_booking["status"] != "Rejected" && $all_booking["status"] != "Pending"): ?>
+                                            <td>
+                                                <button name="checkout_student" data-roomid="<?= htmlspecialchars($all_booking["room_id"]) ?>" data-bookingid="<?= htmlspecialchars($all_booking["booking_id"]) ?>" class="checkout-student"> checkout </button>
+                                            </td>
+                                        <?php endif ?>
+                                        
+                                    </tr>
                                 <?php endforeach ?>
-                                </tr>
-                    </table>
-                </div>
-            <?php endif ?>
+                            </tr>
+                        </table>
+                    </div>
+                <?php endif ?>
+            </div>
         </div>
-        <div class="recent card all-booking-card">
-            <h1>All Bookings</h1>
-            <?php if(empty($all_bookings)): ?>
-                <p>No bookings.</p>
-            <?php endif ?>
-            <?php if ($all_bookings): ?>
-                <div class="container-table">
-                    <table>
-                        <tr>
-                            <th>BOOKING ID</th>
-                            <th>STUDENT</th>
-                            <th>ROOM</th>
-                            <th>DATE</th>
-                            <th>STATUS</th>
-                            <th>CHECKOUT</th>
-                        </tr>
-                            <?php foreach ($all_bookings as $all_booking): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($all_booking["booking_id"]) ?></td>
-                                    <td><?= htmlspecialchars($all_booking["name"]) ?></td>
-                                    <td><?= htmlspecialchars($all_booking["room_number"]) ?></td>
-                                    <td><?= htmlspecialchars($all_booking["booking_date"]) ?></td>
-                                    <?php if ($all_booking["status"] == "Approved"): ?>
-                                        <td>
-                                            <p class="approved"> <?= htmlspecialchars($all_booking["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_booking["status"] == "Pending"): ?>
-                                        <td>
-                                            <p class="pending"> <?= htmlspecialchars($all_booking["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_booking["status"] == "Rejected"): ?>
-                                        <td>
-                                            <p class="rejected"> <?= htmlspecialchars($all_booking["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_booking["status"] == "Checkout"): ?>
-                                        <td>
-                                            <p class="checkout"> <?= htmlspecialchars($all_booking["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_booking["status"] != "Checkout" && $all_booking["status"] != "Rejected" && $all_booking["status"] != "Pending"): ?>
-                                        <td>
-                                            <button name="checkout_student" data-roomid="<?= htmlspecialchars($all_booking["room_id"]) ?>" data-bookingid="<?= htmlspecialchars($all_booking["booking_id"]) ?>" class="checkout-student"> checkout </button>
-                                        </td>
-                                    <?php endif ?>
-                                    
-                                </tr>
-                            <?php endforeach ?>
-                        </tr>
-                    </table>
-                </div>
-            <?php endif ?>
-        </div>
-        <footer>
-             <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
-        </footer>
-    </div>
+    </main>
+    <footer>
+         <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+    </footer>
     <script>
         let checkoutBtn = document.querySelectorAll(".checkout-student");
         let overlayModal = document.querySelector(".overlay-modal");

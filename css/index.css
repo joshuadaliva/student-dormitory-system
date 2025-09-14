@@ -42,6 +42,9 @@ nav{
     -webkit-text-fill-color: transparent;
 
 }
+.nav-title a{
+    text-decoration: none;
+}
 .nav-links{
     display: flex;
     gap: 40px;
@@ -69,7 +72,6 @@ nav .login, .signup{
 }
 nav .login{
     border: 1px solid var(--blue);
-    color: var(--blue);
 }
 nav .login:hover{
     background-color: var(--blue);
@@ -79,6 +81,17 @@ nav .signup{
     background-color: var(--blue);
     color: white;
     border: none;
+}
+nav .login a{
+    text-decoration: none;
+    color: var(--blue);
+}
+nav .login a:hover{
+    color: white;
+}
+nav .signup a{
+    text-decoration: none;
+    color: white;
 }
 nav .hamburger{
     display: none;

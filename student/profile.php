@@ -89,62 +89,13 @@
     <link rel="stylesheet" href="../css/student_profile.css">
 </head>
 <body>
-    <?php require_once "../component/sidebar.php" ?>
-    <div class="student-profile">
-        <h1>Student Profile</h1>
-        <div class="container">
-            <div class="info">
-                <h1><i class="fas fa-user-circle" style="color: var(--blue);"></i>  My Information</h1>
-                <div class="container-info">
-                    <div>
-                        <p class="label">Student Id:</p>
-                        <?= htmlspecialchars($student_info["student_id"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Name:</p>
-                        <?= htmlspecialchars($student_info["name"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Gender:</p>
-                        <?= htmlspecialchars($student_info["gender"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Email:</p>
-                        <?= htmlspecialchars($student_info["email"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Department:</p>
-                        <?= htmlspecialchars($student_info["department"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Program:</p>
-                        <?= htmlspecialchars($student_info["program"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Address:</p>
-                        <?= htmlspecialchars($student_info["address"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Contact:</p>
-                        <?= htmlspecialchars($student_info["contact"]) ?>
-                    </div>
-                    <div>
-                        <p class="label">Account Status:</p>
-                        <?= htmlspecialchars($student_info["status"]) ?>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container">
-            <div class="info">
-                <h1><i class="fas fa-user-circle" style="color: var(--blue);"></i>  Update Information</h1>
-                <?php if (!empty($error)): ?>
-                    <p class="error-message"><?= htmlspecialchars($error) ?></p>
-                <?php endif ?>
-                <?php if (!empty($success)): ?>
-                    <p class="success-message"><?= htmlspecialchars($success) ?></p>
-                <?php endif ?>
-                <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+    <main>
+        <?php require_once "../component/sidebar.php" ?>
+        <div class="student-profile">
+            <h1>Student Profile</h1>
+            <div class="container">
+                <div class="info">
+                    <h1><i class="fas fa-user-circle" style="color: var(--blue);"></i>  My Information</h1>
                     <div class="container-info">
                         <div>
                             <p class="label">Student Id:</p>
@@ -152,58 +103,109 @@
                         </div>
                         <div>
                             <p class="label">Name:</p>
-                            <input type="text" name="name" value="<?= htmlspecialchars($student_info["name"]) ?>" id="">
+                            <?= htmlspecialchars($student_info["name"]) ?>
                         </div>
                         <div>
                             <p class="label">Gender:</p>
-                            <select name="gender" id="gender">
-                                <option value="<?= htmlspecialchars($student_info["gender"]) ?>"><?= htmlspecialchars($student_info["gender"]) ?></option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
+                            <?= htmlspecialchars($student_info["gender"]) ?>
                         </div>
                         <div>
                             <p class="label">Email:</p>
-                            <input type="email" name="email" value="<?= htmlspecialchars($student_info["email"]) ?>" id="">
+                            <?= htmlspecialchars($student_info["email"]) ?>
                         </div>
                         <div>
                             <p class="label">Department:</p>
-                            <select name="department" id="department">
-                                <option value="<?= htmlspecialchars($student_info["department"]) ?>"><?= htmlspecialchars($student_info["department"]) ?></option>
-                                <option value="ccs">CCS</option>
-                            </select>
+                            <?= htmlspecialchars($student_info["department"]) ?>
                         </div>
                         <div>
                             <p class="label">Program:</p>
-                            <select name="program" id="program">
-                                <option value="<?= htmlspecialchars($student_info["program"]) ?>"><?= htmlspecialchars($student_info["program"]) ?></option>
-                                <option value="bsit">bsit</option>
-                                <option value="bscs">bscs</option>
-                                <option value="bsis">bsis</option>
-                            </select>
+                            <?= htmlspecialchars($student_info["program"]) ?>
                         </div>
                         <div>
                             <p class="label">Address:</p>
-                            <input type="text" name="address" value="<?= htmlspecialchars($student_info["address"]) ?>" id="">
+                            <?= htmlspecialchars($student_info["address"]) ?>
                         </div>
                         <div>
                             <p class="label">Contact:</p>
-                            <input type="number" name="contact" value="<?= htmlspecialchars($student_info["contact"]) ?>" id="">
-                            
+                            <?= htmlspecialchars($student_info["contact"]) ?>
                         </div>
                         <div>
                             <p class="label">Account Status:</p>
                             <?= htmlspecialchars($student_info["status"]) ?>
                         </div>
-                        
-                        <button type="submit" name="submit">UPDATE PROFILE</button>
                     </div>
-                </form>
+                </div>
+            </div>
+            <div class="container">
+                <div class="info">
+                    <h1><i class="fas fa-user-circle" style="color: var(--blue);"></i>  Update Information</h1>
+                    <?php if (!empty($error)): ?>
+                        <p class="error-message"><?= htmlspecialchars($error) ?></p>
+                    <?php endif ?>
+                    <?php if (!empty($success)): ?>
+                        <p class="success-message"><?= htmlspecialchars($success) ?></p>
+                    <?php endif ?>
+                    <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                        <div class="container-info">
+                            <div>
+                                <p class="label">Student Id:</p>
+                                <?= htmlspecialchars($student_info["student_id"]) ?>
+                            </div>
+                            <div>
+                                <p class="label">Name:</p>
+                                <input type="text" name="name" value="<?= htmlspecialchars($student_info["name"]) ?>" id="">
+                            </div>
+                            <div>
+                                <p class="label">Gender:</p>
+                                <select name="gender" id="gender">
+                                    <option value="<?= htmlspecialchars($student_info["gender"]) ?>"><?= htmlspecialchars($student_info["gender"]) ?></option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p class="label">Email:</p>
+                                <input type="email" name="email" value="<?= htmlspecialchars($student_info["email"]) ?>" id="">
+                            </div>
+                            <div>
+                                <p class="label">Department:</p>
+                                <select name="department" id="department">
+                                    <option value="<?= htmlspecialchars($student_info["department"]) ?>"><?= htmlspecialchars($student_info["department"]) ?></option>
+                                    <option value="ccs">CCS</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p class="label">Program:</p>
+                                <select name="program" id="program">
+                                    <option value="<?= htmlspecialchars($student_info["program"]) ?>"><?= htmlspecialchars($student_info["program"]) ?></option>
+                                    <option value="bsit">bsit</option>
+                                    <option value="bscs">bscs</option>
+                                    <option value="bsis">bsis</option>
+                                </select>
+                            </div>
+                            <div>
+                                <p class="label">Address:</p>
+                                <input type="text" name="address" value="<?= htmlspecialchars($student_info["address"]) ?>" id="">
+                            </div>
+                            <div>
+                                <p class="label">Contact:</p>
+                                <input type="number" name="contact" value="<?= htmlspecialchars($student_info["contact"]) ?>" id="">
+                                
+                            </div>
+                            <div>
+                                <p class="label">Account Status:</p>
+                                <?= htmlspecialchars($student_info["status"]) ?>
+                            </div>
+                            
+                            <button type="submit" name="submit">UPDATE PROFILE</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-        <footer>
-            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
-        </footer>
-    </div>
+    </main>
+    <footer>
+        <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+    </footer>
 </body>
 </html>

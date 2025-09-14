@@ -20,7 +20,9 @@
         $gender = sanitizeInput($_POST["gender"]);
         $contact = sanitizeInput($_POST["contact"]);
         $address = sanitizeInput($_POST["address"]);
-
+        $accepted_gender = ["Male", "Female"];
+        $accepted_program = ["bsit", "bscs","bsis"];
+        $accepted_department = ["ccs"];
         
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
             $error = "email not valid";
@@ -38,7 +40,15 @@
         else if($password !== $confirm_pass){
             $error = "password not matched";
         }
-
+        else if(!in_array($gender,$accepted_gender)){
+            $error = "invalid gender";
+        }
+        else if(!in_array($program,$accepted_program)){
+            $error = "invalid program";
+        }        
+        else if(!in_array($department,$accepted_department)){
+            $error = "invalid department";
+        }        
     
         
        
@@ -84,13 +94,8 @@
 <body>
     
     <div class="left-panel">
-        <h1>Sign Up Now</h1>
+        <h1>Sign Up Student</h1>
         <br>
-        <div>
-            <p><i class="fa fa-check check-icon" aria-hidden="true"></i> Access all room</p>
-            <p><i class="fa fa-check check-icon" aria-hidden="true"></i> Track your payment progress</p>
-            <p><i class="fa fa-check check-icon" aria-hidden="true"></i> Connect with the admin</p>
-        </div>
     </div>
     <div class="right-panel">
         <h1>Create your account</h1>

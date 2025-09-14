@@ -1,3 +1,8 @@
+<?php 
+
+    session_start();
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,7 +16,7 @@
 <body>
     <!-- navigation bar -->
     <nav>
-        <h1 class="nav-title">DORMITORY SYSTEM</h1>
+        <h1 class="nav-title"><a href="./index.php">DORMITORY SYSTEM</a></h1>
         <ul class="nav-links">
             <li><a href="#features">Features</a></li>
             <li><a href="#rooms">Rooms</a></li>
@@ -21,8 +26,13 @@
             <li><a href="#contact">Contact</a></li>
         </ul>
         <div class="nav-btn">
-            <button class="login">Login</button>
-            <button class="signup">Signup</button>
+            <?php if(!isset($_SESSION["user_type"])): ?>
+                <button class="login"><a href="./student/login.php">Login</a></button>
+                <button class="signup"><a href="./student/signup.php">Signup</a></button>
+            <?php endif ?>
+            <?php if(isset($_SESSION["user_type"]) && $_SESSION["user_type"] === "student"): ?>
+                <button class="signup"><a href="./student/dashboard.php">Dashboard</a></button>
+            <?php endif ?>
         </div>
         <!-- <i class="fas fa-lg fa-bars hamburger"></i> -->
          <button class="hamburger">&#9776;</button>
@@ -35,8 +45,13 @@
             <li><a href="">About</a></li>
             <li><a href="">Location</a></li>
             <li><a href="">Contact</a></li>
-            <li class="active-signup"><a href="./student/signup.php">Signup</a></li>
-            <li><a href="">Login</a></li>
+            <?php if(!isset($_SESSION["user_type"])): ?>
+                <li class="active-signup"><a href="./student/signup.php">Signup</a></li>
+                <li><a href="./student/login.php">Login</a></li>
+            <?php endif ?>
+            <?php if(isset($_SESSION["user_type"]) && $_SESSION["user_type"] === "student"): ?>
+                <li class="active-signup"><a href="./student/dashboard.php">Dashboard</a></li>
+            <?php endif ?>
         </ul>
     </div>
     <!-- header -->

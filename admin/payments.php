@@ -64,117 +64,120 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_payment_rejec
     <link rel="stylesheet" href="../css/admin_bookings.css">
 </head>
 <body>
-    <?php require_once "../component/sidebar.php" ?>
-    <div class="overlay-modal">
-        <div class="modal">
-            <button class="close-modal">&#88;</button>
-            <h1>REASON OF REJECTING PAYMENT</h1>
-            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                <input type="hidden" name="payment_id" class="payment-id">
-                <textarea name="notes" class="reason-input" id="reason" placeholder="enter your reason for rejecting payment"></textarea><br><br>
-                <button name="confirm_payment_rejection" class="confirm-reject-btn" value="confirm rejection"> CONFIRM REJECTION </button>
-            </form>
+    <main>
+        <?php require_once "../component/sidebar.php" ?>
+        <div class="overlay-modal">
+            <div class="modal">
+                <button class="close-modal">&#88;</button>
+                <h1>REASON OF REJECTING PAYMENT</h1>
+                <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                    <input type="hidden" name="payment_id" class="payment-id">
+                    <textarea name="notes" class="reason-input" id="reason" placeholder="enter your reason for rejecting payment"></textarea><br><br>
+                    <button name="confirm_payment_rejection" class="confirm-reject-btn" value="confirm rejection"> CONFIRM REJECTION </button>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="container">
-        <?php if (!empty($error)): ?>
-            <p class="error-message"><?= htmlspecialchars($error) ?></p>
-        <?php endif ?>
-        <?php if (!empty($success)): ?>
-            <p class="success-message"><?= htmlspecialchars($success) ?></p>
-        <?php endif ?>
-        <h1>Manage Payments</h1>
-        <div class="recent card">
-            <h1>Pending Payments</h1>
-            <?php if(empty($all_pending_payments)): ?>
-                <p>No pending payments.</p>
+        <div class="container">
+            <?php if (!empty($error)): ?>
+                <p class="error-message"><?= htmlspecialchars($error) ?></p>
             <?php endif ?>
-            <?php if ($all_pending_payments): ?>
-                <div class="container-table">
-                    <table>
-                        <tr>
-                            <th>PAYMENT ID</th>
-                            <th>STUDENT NAME</th>
-                            <th>AMOUNT</th>
-                            <th>ROOM NUMBER</th>
-                            <th>DATE</th>
-                            <th>ACTIONS</th>
-                        </tr>
+            <?php if (!empty($success)): ?>
+                <p class="success-message"><?= htmlspecialchars($success) ?></p>
+            <?php endif ?>
+            <h1>Manage Payments</h1>
+            <div class="recent card">
+                <h1>Pending Payments</h1>
+                <?php if(empty($all_pending_payments)): ?>
+                    <p>No pending payments.</p>
+                <?php endif ?>
+                <?php if ($all_pending_payments): ?>
+                    <div class="container-table">
+                        <table>
+                            <tr>
+                                <th>PAYMENT ID</th>
+                                <th>STUDENT NAME</th>
+                                <th>AMOUNT</th>
+                                <th>ROOM NUMBER</th>
+                                <th>DATE</th>
+                                <th>ACTIONS</th>
+                            </tr>
 
-                        
-                            <?php foreach ($all_pending_payments as $pending_payment): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($pending_payment["payment_id"]) ?></td>
-                                    <td><?= htmlspecialchars($pending_payment["name"]) ?></td>
-                                    <td><?= htmlspecialchars($pending_payment["amount"]) ?></td>
-                                    <td><?= htmlspecialchars($pending_payment["room_number"]) ?></td>
-                                    <td><?= htmlspecialchars($pending_payment["date_payment"]) ?></td>
-                                    <td>
-                                        <div class="action">
-                                            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                                                <input type="hidden" name="payment_id" value="<?= htmlspecialchars($pending_payment["payment_id"]) ?>">
-                                                <button class="approve" name="approve">Approve</button>
-                                            </form>
-                                            <button class="reject-btn" name="reject-btn" id="reject-btn" data-id="<?= $pending_payment['payment_id'] ?>">Reject</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach ?>
-                        </tr>
-                    </table>
-                </div>
-            <?php endif ?>
+                            
+                                <?php foreach ($all_pending_payments as $pending_payment): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($pending_payment["payment_id"]) ?></td>
+                                        <td><?= htmlspecialchars($pending_payment["name"]) ?></td>
+                                        <td><?= htmlspecialchars($pending_payment["amount"]) ?></td>
+                                        <td><?= htmlspecialchars($pending_payment["room_number"]) ?></td>
+                                        <td><?= htmlspecialchars($pending_payment["date_payment"]) ?></td>
+                                        <td>
+                                            <div class="action">
+                                                <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                                                    <input type="hidden" name="payment_id" value="<?= htmlspecialchars($pending_payment["payment_id"]) ?>">
+                                                    <button class="approve" name="approve">Approve</button>
+                                                </form>
+                                                <button class="reject-btn" name="reject-btn" id="reject-btn" data-id="<?= $pending_payment['payment_id'] ?>">Reject</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tr>
+                        </table>
+                    </div>
+                <?php endif ?>
+            </div>
+            <div class="recent card">
+                <h1>All Payments</h1>
+                <?php if(empty($all_payments)): ?>
+                    <p>No payments.</p>
+                <?php endif ?>
+                <?php if ($all_payments): ?>
+                    <div class="container-table">
+                        <table>
+                            <tr>
+                                <th>Payment ID</th>
+                                <th>STUDENT</th>
+                                <th>AMOUNT</th>
+                                <th>DATE</th>
+                                <th>STATUS</th>
+                                <th>NOTES</th>
+                            </tr>
+                                <?php foreach ($all_payments as $all_payment): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["name"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["date_payment"]) ?></td>
+                                        
+                                        <?php if ($all_payment["status"] == "Approved"): ?>
+                                            <td>
+                                                <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($all_payment["status"] == "Pending"): ?>
+                                            <td>
+                                                <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($all_payment["status"] == "Rejected"): ?>
+                                            <td>
+                                                <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tr>
+                        </table>
+                    </div>
+                <?php endif ?>
+            </div>
         </div>
-        <div class="recent card">
-            <h1>All Payments</h1>
-            <?php if(empty($all_payments)): ?>
-                <p>No payments.</p>
-            <?php endif ?>
-            <?php if ($all_payments): ?>
-                <div class="container-table">
-                    <table>
-                        <tr>
-                            <th>Payment ID</th>
-                            <th>STUDENT</th>
-                            <th>AMOUNT</th>
-                            <th>DATE</th>
-                            <th>STATUS</th>
-                            <th>NOTES</th>
-                        </tr>
-                            <?php foreach ($all_payments as $all_payment): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["name"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["date_payment"]) ?></td>
-                                    
-                                    <?php if ($all_payment["status"] == "Approved"): ?>
-                                        <td>
-                                            <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_payment["status"] == "Pending"): ?>
-                                        <td>
-                                            <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_payment["status"] == "Rejected"): ?>
-                                        <td>
-                                            <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
-                                </tr>
-                            <?php endforeach ?>
-                        </tr>
-                    </table>
-                </div>
-            <?php endif ?>
-        </div>
-        <footer>
-            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
-        </footer>
-    </div>
+    </main>
+    <footer>
+        <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+    </footer>
+    
     <script>
         let rejectBtn = document.querySelectorAll(".reject-btn");
         let overlayModal = document.querySelector(".overlay-modal");

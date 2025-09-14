@@ -35,6 +35,7 @@
         padding: 0;
         margin: 0;
         display: flex;
+        flex-direction: column;
         background-color: #f9fafb;
         gap: 2px;
     }
@@ -147,7 +148,9 @@
         font-weight: bold;
 
     }
-    
+    .nav-title a{
+        text-decoration: none;
+    }
     @media screen and (max-width : 967px) {
         .sidebar{
             transform: translate(-100%);
@@ -166,17 +169,17 @@
         nav{
             display: flex;
         }
-        body{
-            display: block;
+        .container{
             padding-left: 20px;
         }
     }
     </style>
 </head>
 <body>
+    
     <div class="sidebar">
         <div class="header">
-            <h1>dormitory system</h1>
+            <h1 class="nav-title"><a href="../index.php">Dormitory System</a></h1>
             <button class="close-btn">&#88;</button>
         </div>
         <hr color="#e6e8ec" size="1">
@@ -204,7 +207,7 @@
     </div>
     <nav>
         <button class="hamburger">&#9776;</button>
-        <h1 class="nav-title">DORMITORY SYSTEM</h1>
+        <h1 class="nav-title"><a href="../index.php">DORMITORY SYSTEM</a></h1>
     </nav>
 
 

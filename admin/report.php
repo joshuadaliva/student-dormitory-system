@@ -18,7 +18,7 @@ else{
 $error = "";
 $success = "";
 
-$date = null ?? date('Y-m-d');
+$date = date('Y-m-d');
 $month = date("m", strtotime($date));
 $day = date("d", strtotime($date));
 $year = date("Y", strtotime($date));
@@ -64,53 +64,55 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["date-submit"])){
     <link rel="stylesheet" href="../css/admin_reports.css">
 </head>
 <body>
-    <?php require_once "../component/sidebar.php" ?>
-    <div class="container">
-        <?php if (!empty($error)): ?>
-            <p class="error-message"><?= htmlspecialchars($error) ?></p>
-        <?php endif ?>
-        <?php if (!empty($success)): ?>
-            <p class="success-message"><?= htmlspecialchars($success) ?></p>
-        <?php endif ?>
-        <h1>Reports</h1>
-        <div class="recent card">
-            <div style="display: flex; gap:20px; align-items:center">
-                <h1>All Payments</h1>
-                </form>
-                <form action="" method="POST">
-                    <input type="date" name="date" id="date" value="<?= date("$year-$month-$day") ?>"><br>
-                    <button type="submit" name="date-submit">get payments</button>
-                     <button type="submit" formaction="./export_data.php" name="download-submit">Download CSV</button>
-                </form>
-            </div>
-            <?php if(empty($monthly_payments)): ?>
-                <p>No payments.</p>
+    <main>
+        <?php require_once "../component/sidebar.php" ?>
+        <div class="container">
+            <?php if (!empty($error)): ?>
+                <p class="error-message"><?= htmlspecialchars($error) ?></p>
             <?php endif ?>
-            <?php if ($monthly_payments): ?>
-                <div class="container-table">
-                    <table>
-                        <tr>
-                            <th>STUDENT NAME</th>
-                            <th>AMOUNT</th>
-                            <th>DATE</th>
-                            <th>STATUS</th>
-                        </tr>
-                            <?php foreach ($monthly_payments as $monthly_payment): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($monthly_payment["name"]) ?></td>
-                                    <td><?= htmlspecialchars($monthly_payment["amount"]) ?></td>
-                                    <td><?= htmlspecialchars($monthly_payment["date_payment"]) ?></td>
-                                    <td><p class="approved"> <?= htmlspecialchars($monthly_payment["status"]) ?></p></td>
-                                </tr>
-                            <?php endforeach ?>
-                        </tr>
-                    </table>
+            <?php if (!empty($success)): ?>
+                <p class="success-message"><?= htmlspecialchars($success) ?></p>
+            <?php endif ?>
+            <h1>Reports</h1>
+            <div class="recent card">
+                <div style="display: flex; gap:20px; align-items:center">
+                    <h1>All Payments</h1>
+                    </form>
+                    <form action="" method="POST">
+                        <input type="date" name="date" id="date" value="<?= date("$year-$month-$day") ?>"><br>
+                        <button type="submit" formaction="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" name="date-submit">get payments</button>
+                        <button type="submit" formaction="./export_data.php" name="download-submit">Download CSV</button>
+                    </form>
                 </div>
-            <?php endif ?>
+                <?php if(empty($monthly_payments)): ?>
+                    <p>No payments.</p>
+                <?php endif ?>
+                <?php if ($monthly_payments): ?>
+                    <div class="container-table">
+                        <table>
+                            <tr>
+                                <th>STUDENT NAME</th>
+                                <th>AMOUNT</th>
+                                <th>DATE</th>
+                                <th>STATUS</th>
+                            </tr>
+                                <?php foreach ($monthly_payments as $monthly_payment): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($monthly_payment["name"]) ?></td>
+                                        <td><?= htmlspecialchars($monthly_payment["amount"]) ?></td>
+                                        <td><?= htmlspecialchars($monthly_payment["date_payment"]) ?></td>
+                                        <td><p class="approved"> <?= htmlspecialchars($monthly_payment["status"]) ?></p></td>
+                                    </tr>
+                                <?php endforeach ?>
+                            </tr>
+                        </table>
+                    </div>
+                <?php endif ?>
+            </div>
         </div>
-        <footer>
-            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
-        </footer>
-    </div>
+    </main>
+    <footer>
+        <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+    </footer>
 </body>
 </html>

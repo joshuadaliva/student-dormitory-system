@@ -13,6 +13,7 @@
     }
 
 
+
     function isAdmin($location){
         if(isset($_SESSION["user_type"])){
             if( $_SESSION["user_type"] === "admin") {

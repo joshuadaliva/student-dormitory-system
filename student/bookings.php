@@ -57,76 +57,78 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_bookings"])) {
 </head>
 
 <body>
-    <?php require_once "../component/sidebar.php" ?>
-    <div class="student-bookings">
-        <?php if (!empty($error)): ?>
-            <p class="error-message"><?= htmlspecialchars($error) ?></p>
-        <?php endif ?>
-        <?php if (!empty($success)): ?>
-            <p class="success-message"><?= htmlspecialchars($success) ?></p>
-        <?php endif ?>
-        <h1>Bookings</h1>
-        <div class="container1">
-            <div class="rooms-container">
-                <h1><i class="fas fa-door-open" style="color: blue; font-size:20px; margin-right:12px"></i> Available Rooms</h1>
-                <?php if(empty($allRooms)): ?>
-                    <p>No rooms yet.</p>
-                <?php endif ?>
-                <div class="container-card">
-                    <?php if ($allRooms): ?>
-                        <?php foreach ($allRooms as $rooms): ?>
-                            <div class="card">
-                                <img src="<?= htmlspecialchars($rooms["imagePath"]) ?>" alt="">
-                                <h1><?= htmlspecialchars($rooms["room_number"]) . " " . htmlspecialchars($rooms["roomType"]) ?></h1>
-                                <p class="description"><?= htmlspecialchars($rooms["description"]) ?></p>
-                                <div class="books-rent-btn">
-                                    <p class="pay-isavaible"><?= htmlspecialchars($rooms["rent_fee"])  . " /month <br> " . htmlspecialchars($rooms["status"])  ?> </p>
-                                    <?php if($rooms["status"] === "Available"): ?>
-                                        <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                                            <input type="hidden" name="room_id" value="<?= $rooms["room_id"] ?>">
-                                            <button type="submit" name="add_bookings">Book Now</button>
-                                        </form>
-                                    <?php endif ?>
+    <main>
+        <?php require_once "../component/sidebar.php" ?>
+        <div class="student-bookings">
+            <?php if (!empty($error)): ?>
+                <p class="error-message"><?= htmlspecialchars($error) ?></p>
+            <?php endif ?>
+            <?php if (!empty($success)): ?>
+                <p class="success-message"><?= htmlspecialchars($success) ?></p>
+            <?php endif ?>
+            <h1>Bookings</h1>
+            <div class="container1">
+                <div class="rooms-container">
+                    <h1><i class="fas fa-door-open" style="color: blue; font-size:20px; margin-right:12px"></i> Available Rooms</h1>
+                    <?php if(empty($allRooms)): ?>
+                        <p>No rooms yet.</p>
+                    <?php endif ?>
+                    <div class="container-card">
+                        <?php if ($allRooms): ?>
+                            <?php foreach ($allRooms as $rooms): ?>
+                                <div class="card">
+                                    <img src="<?= htmlspecialchars($rooms["imagePath"]) ?>" alt="">
+                                    <h1><?= htmlspecialchars($rooms["room_number"]) . " " . htmlspecialchars($rooms["roomType"]) ?></h1>
+                                    <p class="description"><?= htmlspecialchars($rooms["description"]) ?></p>
+                                    <div class="books-rent-btn">
+                                        <p class="pay-isavaible"><?= htmlspecialchars($rooms["rent_fee"])  . " /month <br> " . htmlspecialchars($rooms["status"])  ?> </p>
+                                        <?php if($rooms["status"] === "Available"): ?>
+                                            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                                                <input type="hidden" name="room_id" value="<?= $rooms["room_id"] ?>">
+                                                <button type="submit" name="add_bookings">Book Now</button>
+                                            </form>
+                                        <?php endif ?>
+                                    </div>
                                 </div>
+                            <?php endforeach ?>
+                        <?php endif ?>
+                    </div>
+                </div>
+    
+                <div class="room-list container">
+                    <h1><i class="fas fa-calendar-check " style="font-size:20px; margin-right:12px; color:#16a34a"></i>My Bookings</h1>
+                    <?php if(empty($booking_details)): ?>
+                        <p>No bookings.</p>
+                    <?php endif ?>
+                    <?php if ($booking_details): ?>
+                        <?php foreach ($booking_details as $booking_detail) : ?>
+                            <div class="container-table">
+                                <h1><?= "Room: " . htmlspecialchars($booking_detail["room_number"]) . " " . htmlspecialchars($booking_detail["roomType"]) ?></h1>
+                                <p><?= "Booked on " . htmlspecialchars($booking_detail["booking_date"]) ?></p>
+                                <h1><?= "Monthly Rent: " . htmlspecialchars($booking_detail["rent_fee"]) ?></h1>
+                                <?php if ($booking_detail["status"] == "Approved"): ?>
+                                    <p class="status approved"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
+                                    <button><a href="payment.php">Pay Now</a></button>
+                                <?php endif ?>
+                                <?php if ($booking_detail["status"] == "Pending"): ?>
+                                    <p class="status pending"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
+                                <?php endif ?>
+                                <?php if ($booking_detail["status"] == "Rejected"): ?>
+                                    <p class="status rejected"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
+                                <?php endif ?>
+                                <?php if ($booking_detail["status"] == "Checkout"): ?>
+                                    <p class="status checkout"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
+                                <?php endif ?>
                             </div>
                         <?php endforeach ?>
                     <?php endif ?>
                 </div>
             </div>
-
-            <div class="room-list container">
-                <h1><i class="fas fa-calendar-check " style="font-size:20px; margin-right:12px; color:#16a34a"></i>My Bookings</h1>
-                <?php if(empty($booking_details)): ?>
-                    <p>No bookings.</p>
-                <?php endif ?>
-                <?php if ($booking_details): ?>
-                    <?php foreach ($booking_details as $booking_detail) : ?>
-                        <div class="container-table">
-                            <h1><?= "Room: " . htmlspecialchars($booking_detail["room_number"]) . " " . htmlspecialchars($booking_detail["roomType"]) ?></h1>
-                            <p><?= "Booked on " . htmlspecialchars($booking_detail["booking_date"]) ?></p>
-                            <h1><?= "Monthly Rent: " . htmlspecialchars($booking_detail["rent_fee"]) ?></h1>
-                            <?php if ($booking_detail["status"] == "Approved"): ?>
-                                <p class="status approved"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
-                                <button><a href="payment.php">Pay Now</a></button>
-                            <?php endif ?>
-                            <?php if ($booking_detail["status"] == "Pending"): ?>
-                                <p class="status pending"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
-                            <?php endif ?>
-                            <?php if ($booking_detail["status"] == "Rejected"): ?>
-                                <p class="status rejected"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
-                            <?php endif ?>
-                            <?php if ($booking_detail["status"] == "Checkout"): ?>
-                                <p class="status checkout"> <?= htmlspecialchars($booking_detail["status"]) ?></p>
-                            <?php endif ?>
-                        </div>
-                    <?php endforeach ?>
-                <?php endif ?>
-            </div>
         </div>
-        <footer>
-            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
-        </footer>
-    </div>
+    </main>
+    <footer>
+        <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+    </footer>
 </body>
 
 </html>

@@ -40,149 +40,151 @@
     <link rel="stylesheet" href="../css/admin_dashboard.css">
 </head>
 <body>
-    <?php require_once "../component/sidebar.php" ?>
-    <div class="admin-dashboard">
-        <?php if(isset($_SESSION["success_login"])): ?>
-            <p class="success-login"><?= htmlspecialchars($_SESSION["success_login"]) ?></p>
-            <?php unset($_SESSION["success_login"]); ?>
-        <?php endif ?>
-        <h1>Admin Dashboard</h1>
-        <div class="container">
-            <div class="all-overview-section">
-                <div class="card card-overview">
-                    <div>
-                        <i class="fas fa-user-graduate fa-2x" style="color: #1d4ed8; padding:10px; background-color:#dbeafe; border-radius:10px"></i>
+    <main>
+        <?php require_once "../component/sidebar.php" ?>
+        <div class="admin-dashboard">
+            <?php if(isset($_SESSION["success_login"])): ?>
+                <p class="success-login"><?= htmlspecialchars($_SESSION["success_login"]) ?></p>
+                <?php unset($_SESSION["success_login"]); ?>
+            <?php endif ?>
+            <h1>Admin Dashboard</h1>
+            <div class="container">
+                <div class="all-overview-section">
+                    <div class="card card-overview" style="background-color: #22c55e; color:white">
+                        <div>
+                            <i class="fas fa-user-graduate fa-2x" style="color: #1d4ed8; padding:10px; background-color:#dbeafe; border-radius:10px"></i>
+                        </div>
+                        <div>
+                            <h1 style="color:white">Total Students</h1>
+                            <p><?= htmlspecialchars($student_count) ?></p>
+                        </div>
                     </div>
-                    <div>
-                        <h1>Total Students</h1>
-                        <p><?= htmlspecialchars($student_count) ?></p>
+                    <div class="card card-overview" style="background-color: #eab308; color:white">
+                        <div>
+                            <i class="fas fa-door-open fa-2x" style="color: #15803d; padding:10px; background-color:#dcfce7; border-radius:10px"></i>
+                        </div>
+                        <div>
+                            <h1 style="color: white;" >Total Rooms</h1>
+                            <p><?= htmlspecialchars($rooms_count) ?></p>
+                        </div>
                     </div>
+                    <div class="card card-overview" style="background-color:  #3b82f6; color:white">
+                        <div>
+                            <i class="fas fa-calendar-check fa-2x" style="color: #a16207; padding:10px; background-color:#fef9c3; border-radius:10px"></i>
+                        </div>
+                        <div>
+                            <h1 style="color: white;">Pending Bookings</h1>
+                            <p><?= htmlspecialchars($pending_bookings_count) ?></p>
+                        </div>
+                    </div>
+                    <div class="card card-overview" style="background-color: #ef4444; color:white">
+                        <div>
+                            <i class="fas fa-credit-card fa-2x" style="color:#b91c1c; padding:10px; background-color:#fee2e2; border-radius:10px"></i>
+                        </div>
+                        <div>
+                            <h1 style="color: white;">Pending Payments</h1>
+                            <p><?= htmlspecialchars($pending_payments_count) ?></p>
+                        </div>
+                    </div>
+                    
                 </div>
-                <div class="card card-overview">
-                    <div>
-                        <i class="fas fa-door-open fa-2x" style="color: #15803d; padding:10px; background-color:#dcfce7; border-radius:10px"></i>
-                    </div>
-                    <div>
-                        <h1>Total Rooms</h1>
-                        <p><?= htmlspecialchars($rooms_count) ?></p>
-                    </div>
+                <div class="recent card">
+                    <h1><i class="fas fa-calendar-alt" style="color:#2563eb; margin-right:12px"></i>Recent Bookings</h1>
+                    <?php if(empty($all_recent_bookings)): ?>
+                        <p>No bookings.</p>
+                    <?php endif ?>
+                    <?php if($all_recent_bookings): ?>
+                        <div class="container-table">
+                            <table>
+                                <tr>
+                                    <th>STUDENT</th>
+                                    <th>ROOM</th>
+                                    <th>DATE</th>
+                                    <th>STATUS</th>
+                                </tr>
+                                
+                                    <?php foreach($all_recent_bookings as $recent_booking): ?>
+                                        <tr>
+                                            <td><?= htmlspecialchars($recent_booking["name"]) ?></td>
+                                            <td><?= htmlspecialchars($recent_booking["room_number"]) ?></td>
+                                            <td><?= htmlspecialchars($recent_booking["booking_date"]) ?></td>
+                                            <?php if ($recent_booking["status"] == "Approved"): ?>
+                                                <td>
+                                                    <p class="approved"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                                </td>
+                                            <?php endif ?>
+                                            <?php if ($recent_booking["status"] == "Pending"): ?>
+                                                <td>
+                                                    <p class="pending"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                                </td>
+                                            <?php endif ?>
+                                            <?php if ($recent_booking["status"] == "Rejected"): ?>
+                                                <td>
+                                                    <p class="rejected"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                                </td>
+                                            <?php endif ?>
+                                            <?php if ($recent_booking["status"] == "Checkout"): ?>
+                                                <td>
+                                                    <p class="checkout"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                                </td>
+                                            <?php endif ?>
+                                        </tr>
+                                    <?php endforeach?>
+                            </table>
+                        </div>
+                    <?php endif ?>
                 </div>
-                <div class="card card-overview">
-                    <div>
-                        <i class="fas fa-calendar-check fa-2x" style="color: #a16207; padding:10px; background-color:#fef9c3; border-radius:10px"></i>
-                    </div>
-                    <div>
-                        <h1>Pending Bookings</h1>
-                        <p><?= htmlspecialchars($pending_bookings_count) ?></p>
-                    </div>
-                </div>
-                <div class="card card-overview">
-                    <div>
-                        <i class="fas fa-credit-card fa-2x" style="color:#b91c1c; padding:10px; background-color:#fee2e2; border-radius:10px"></i>
-                    </div>
-                    <div>
-                        <h1>Pending Payments</h1>
-                        <p><?= htmlspecialchars($pending_payments_count) ?></p>
-                    </div>
-                </div>
-                
-            </div>
-            <div class="recent card">
-                <h1><i class="fas fa-calendar-alt" style="color:#2563eb; margin-right:12px"></i>Recent Bookings</h1>
-                <?php if(empty($all_recent_bookings)): ?>
-                    <p>No bookings.</p>
+                <div class="recent card">
+                    <h1><i class="fas fa-dollar-sign text-green-600" style="color:#2bab5a;margin-right:12px"></i>Recent Payments</h1>
+                    <?php if(empty($all_payments)): ?>
+                    <p>No payments.</p>
                 <?php endif ?>
-                <?php if($all_recent_bookings): ?>
+                <?php if ($all_payments): ?>
                     <div class="container-table">
                         <table>
                             <tr>
+                                <th>Payment ID</th>
                                 <th>STUDENT</th>
-                                <th>ROOM</th>
+                                <th>AMOUNT</th>
                                 <th>DATE</th>
                                 <th>STATUS</th>
+                                <th>NOTES</th>
                             </tr>
-                            
-                                <?php foreach($all_recent_bookings as $recent_booking): ?>
+                                <?php foreach ($all_payments as $all_payment): ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($recent_booking["name"]) ?></td>
-                                        <td><?= htmlspecialchars($recent_booking["room_number"]) ?></td>
-                                        <td><?= htmlspecialchars($recent_booking["booking_date"]) ?></td>
-                                        <?php if ($recent_booking["status"] == "Approved"): ?>
+                                        <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["name"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["date_payment"]) ?></td>
+                                        
+                                        <?php if ($all_payment["status"] == "Approved"): ?>
                                             <td>
-                                                <p class="approved"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                                <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
                                             </td>
                                         <?php endif ?>
-                                        <?php if ($recent_booking["status"] == "Pending"): ?>
+                                        <?php if ($all_payment["status"] == "Pending"): ?>
                                             <td>
-                                                <p class="pending"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                                <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
                                             </td>
                                         <?php endif ?>
-                                        <?php if ($recent_booking["status"] == "Rejected"): ?>
+                                        <?php if ($all_payment["status"] == "Rejected"): ?>
                                             <td>
-                                                <p class="rejected"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
+                                                <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
                                             </td>
                                         <?php endif ?>
-                                        <?php if ($recent_booking["status"] == "Checkout"): ?>
-                                            <td>
-                                                <p class="checkout"> <?= htmlspecialchars($recent_booking["status"]) ?></p>
-                                            </td>
-                                        <?php endif ?>
+                                        <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
                                     </tr>
-                                <?php endforeach?>
+                                <?php endforeach ?>
+                            </tr>
                         </table>
                     </div>
                 <?php endif ?>
-            </div>
-            <div class="recent card">
-                <h1><i class="fas fa-dollar-sign text-green-600" style="color:#2bab5a;margin-right:12px"></i>Recent Payments</h1>
-                <?php if(empty($all_payments)): ?>
-                <p>No payments.</p>
-            <?php endif ?>
-            <?php if ($all_payments): ?>
-                <div class="container-table">
-                    <table>
-                        <tr>
-                            <th>Payment ID</th>
-                            <th>STUDENT</th>
-                            <th>AMOUNT</th>
-                            <th>DATE</th>
-                            <th>STATUS</th>
-                            <th>NOTES</th>
-                        </tr>
-                            <?php foreach ($all_payments as $all_payment): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["name"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["date_payment"]) ?></td>
-                                    
-                                    <?php if ($all_payment["status"] == "Approved"): ?>
-                                        <td>
-                                            <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_payment["status"] == "Pending"): ?>
-                                        <td>
-                                            <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_payment["status"] == "Rejected"): ?>
-                                        <td>
-                                            <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
-                                </tr>
-                            <?php endforeach ?>
-                        </tr>
-                    </table>
                 </div>
-            <?php endif ?>
             </div>
         </div>
-        <footer>
-            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
-        </footer>
-    </div>
+    </main>
+    <footer>
+        <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+    </footer>
 </body>
 </html>

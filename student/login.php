@@ -60,13 +60,7 @@
 </head>
 <body>
         <div class="left-panel">
-            <h1>Login Now</h1>
-            <br>
-            <div>
-                <p><i class="fa fa-check check-icon" aria-hidden="true"></i> Access all room</p>
-                <p><i class="fa fa-check check-icon" aria-hidden="true"></i> Track your payment progress</p>
-                <p><i class="fa fa-check check-icon" aria-hidden="true"></i> Connect with the admin</p>
-            </div>
+            <h1>Login Student</h1>
         </div>
         <div class="right-panel">
             <h1>Student Sign In</h1>

@@ -58,84 +58,86 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
     <link rel="stylesheet" href="../css/student_payments.css">
 </head>
 <body>
-    <?php require_once "../component/sidebar.php" ?>
-    <div class="student-payments">
-        <h1>My Payments</h1>
-        <div class="room-list container">
-            <h1>Make Payments</h1>
-            <?php if (!empty($error)): ?>
-                <p class="error-message"><?= htmlspecialchars($error) ?></p>
-            <?php endif ?>
-            <?php if (!empty($success)): ?>
-                <p class="success-message"><?= htmlspecialchars($success) ?></p>
-            <?php endif ?>
-            <?php if(empty($payment_details)): ?>
+    <main>
+        <?php require_once "../component/sidebar.php" ?>
+        <div class="student-payments">
+            <h1>My Payments</h1>
+            <div class="room-list container">
+                <h1>Make Payments</h1>
+                <?php if (!empty($error)): ?>
+                    <p class="error-message"><?= htmlspecialchars($error) ?></p>
+                <?php endif ?>
+                <?php if (!empty($success)): ?>
+                    <p class="success-message"><?= htmlspecialchars($success) ?></p>
+                <?php endif ?>
+                <?php if(empty($payment_details)): ?>
+                        <p>No payment.</p>
+                    <?php endif ?>
+                <?php if ($payment_details): ?>
+                    <div class="container-table">
+                        <h1><?= "Room: " . htmlspecialchars($payment_details["room_number"]) . " " . htmlspecialchars($payment_details["roomType"]) ?></h1>
+                        <h1><?= "Monthly Rent: " . htmlspecialchars($payment_details["rent_fee"]) ?></h1>
+                    </div>
+                    <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+                        <input type="hidden" name="booking_id" value="<?= $payment_details["booking_id"] ?>">
+                        <input type="hidden" name="rent_fee" value="<?= $payment_details["rent_fee"] ?>">
+                        <button type="submit" class="submit" name="pay_now">Pay Now</button>
+                    </form>
+                <?php endif ?>
+            </div>
+            <div class="recent card">
+                <h1>All payments</h1>
+                <?php if(empty($all_payments)): ?>
                     <p>No payment.</p>
                 <?php endif ?>
-            <?php if ($payment_details): ?>
-                <div class="container-table">
-                    <h1><?= "Room: " . htmlspecialchars($payment_details["room_number"]) . " " . htmlspecialchars($payment_details["roomType"]) ?></h1>
-                    <h1><?= "Monthly Rent: " . htmlspecialchars($payment_details["rent_fee"]) ?></h1>
-                </div>
-                <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
-                    <input type="hidden" name="booking_id" value="<?= $payment_details["booking_id"] ?>">
-                    <input type="hidden" name="rent_fee" value="<?= $payment_details["rent_fee"] ?>">
-                    <button type="submit" class="submit" name="pay_now">Pay Now</button>
-                </form>
-            <?php endif ?>
-        </div>
-        <div class="recent card">
-            <h1>All payments</h1>
-            <?php if(empty($all_payments)): ?>
-                <p>No payment.</p>
-            <?php endif ?>
-            <?php if ($all_payments): ?>
-                <div class="table-container">
-                    <table>
-                        <tr>
-                            <th>PAYMENT ID</th>
-                            <th>ROOM NO</th>
-                            <th>AMOUNT</th>
-                            <th>DATE</th>
-                            <th>STATUS</th>
-                            <th>NOTE</th>
-                        </tr>
-
-                        
-                            <?php foreach ($all_payments as $all_payment): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["room_id"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
-                                    <td><?= htmlspecialchars($all_payment["payment_date"]) ?></td>
-                                    <?php if ($all_payment["status"] == "Approved"): ?>
-                                        <td>
-                                            <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_payment["status"] == "Pending"): ?>
-                                        <td>
-                                            <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <?php if ($all_payment["status"] == "Rejected"): ?>
-                                        <td>
-                                            <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
-                                        </td>
-                                    <?php endif ?>
-                                    <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
-                                <tr>
-                                <?php endforeach ?>
+                <?php if ($all_payments): ?>
+                    <div class="table-container">
+                        <table>
+                            <tr>
+                                <th>PAYMENT ID</th>
+                                <th>ROOM NO</th>
+                                <th>AMOUNT</th>
+                                <th>DATE</th>
+                                <th>STATUS</th>
+                                <th>NOTE</th>
+                            </tr>
+    
                             
-                                </tr>
-                    </table>
-                </div>
-            <?php endif ?>
+                                <?php foreach ($all_payments as $all_payment): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($all_payment["payment_id"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["room_id"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["amount"]) ?></td>
+                                        <td><?= htmlspecialchars($all_payment["payment_date"]) ?></td>
+                                        <?php if ($all_payment["status"] == "Approved"): ?>
+                                            <td>
+                                                <p class="approved"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($all_payment["status"] == "Pending"): ?>
+                                            <td>
+                                                <p class="pending"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <?php if ($all_payment["status"] == "Rejected"): ?>
+                                            <td>
+                                                <p class="rejected"> <?= htmlspecialchars($all_payment["status"]) ?></p>
+                                            </td>
+                                        <?php endif ?>
+                                        <td><?= htmlspecialchars($all_payment["notes"]) ?></td>
+                                    <tr>
+                                    <?php endforeach ?>
+                                
+                                    </tr>
+                        </table>
+                    </div>
+                <?php endif ?>
+            </div>
         </div>
-        <footer>
-            <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
-        </footer>
-    </div>
+    </main>
+    <footer>
+        <p>© <?= date("Y") ?> Student Dormitory Management System. All rights reserved.</p>
+    </footer>
 </body>
 
 </html>
