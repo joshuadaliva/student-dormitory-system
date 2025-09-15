@@ -52,7 +52,8 @@
                 <div class="all-overview-section">
                     <div class="card card-overview" style="background-color: #22c55e; color:white">
                         <div>
-                            <i class="fas fa-user-graduate fa-2x" style="color: #1d4ed8; padding:10px; background-color:#dbeafe; border-radius:10px"></i>
+                            <i class="fas fa-user-graduate fa-2x" style="color: #15803d; padding:10px; background-color:#dcfce7; border-radius:10px"></i>
+
                         </div>
                         <div>
                             <h1 style="color:white">Total Students</h1>
@@ -61,7 +62,7 @@
                     </div>
                     <div class="card card-overview" style="background-color: #eab308; color:white">
                         <div>
-                            <i class="fas fa-door-open fa-2x" style="color: #15803d; padding:10px; background-color:#dcfce7; border-radius:10px"></i>
+                        <i class="fas fa-door-open fa-2x" style="color: #a16207; padding:10px; background-color:#fef9c3; border-radius:10px"></i>
                         </div>
                         <div>
                             <h1 style="color: white;" >Total Rooms</h1>
@@ -70,7 +71,7 @@
                     </div>
                     <div class="card card-overview" style="background-color:  #3b82f6; color:white">
                         <div>
-                            <i class="fas fa-calendar-check fa-2x" style="color: #a16207; padding:10px; background-color:#fef9c3; border-radius:10px"></i>
+                            <i class="fas fa-calendar-check fa-2x" style="color: #1d4ed8; padding:10px; background-color:#dbeafe; border-radius:10px"></i>
                         </div>
                         <div>
                             <h1 style="color: white;">Pending Bookings</h1>

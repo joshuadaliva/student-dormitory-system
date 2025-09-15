@@ -33,6 +33,9 @@
             <?php if(isset($_SESSION["user_type"]) && $_SESSION["user_type"] === "student"): ?>
                 <button class="signup"><a href="./student/dashboard.php">Dashboard</a></button>
             <?php endif ?>
+            <?php if(isset($_SESSION["user_type"]) && $_SESSION["user_type"] === "admin"): ?>
+                <button class="signup"><a href="./student/dashboard.php">Dashboard</a></button>
+            <?php endif ?>
         </div>
         <!-- <i class="fas fa-lg fa-bars hamburger"></i> -->
          <button class="hamburger">&#9776;</button>
@@ -52,12 +55,15 @@
             <?php if(isset($_SESSION["user_type"]) && $_SESSION["user_type"] === "student"): ?>
                 <li class="active-signup"><a href="./student/dashboard.php">Dashboard</a></li>
             <?php endif ?>
+            <?php if(isset($_SESSION["user_type"]) && $_SESSION["user_type"] === "admin"): ?>
+                <li class="active-signup"><a href="./admin/dashboard.php">Dashboard</a></li>
+            <?php endif ?>
         </ul>
     </div>
     <!-- header -->
     <header>
         <h1>Student Dormitory Management System</h1>
-        <p>Manage rooms, residents, maintenance, and payments all in one intuitive platform. </p>
+        <p>Manage rooms, bookings, and payments all in one intuitive platform. </p>
         <div>
             <button class="get-started">Get Started</button>
             <button class="learn-more">Learn More</button>
@@ -72,14 +78,14 @@
                     <i class="fas fa-door-open"></i>
                 </div>
                 <h2>Room Allocation</h2>
-                <p>Easily assign and manage rooms for  <br>students with real-time availability. </p>
+                <p>Easily assign and manage rooms for  <br>students. </p>
             </div>
             <div class="card">
                 <div class="font-icon-container font-icon-container-profile">
                     <i class="fas fa-users"></i>
                 </div>
                 <h2>Resident Profiles</h2>
-                <p>Maintain detailed profiles for each resident<br> including contact and emergency info. </p>
+                <p>Maintain detailed profiles for each resident<br> including contact info. </p>
             </div>
             <div class="card">
                 <div class="font-icon-container font-icon-container-money">
@@ -116,8 +122,8 @@
     <section class="about-section" id="about">
         <img src="https://storage.googleapis.com/a1aa/image/56823748-e73f-487e-d859-d66b03d96006.jpg" alt="">
         <div>
-            <h1>About DormManage </h1>
-            <p>DormManage is a comprehensive student dormitory management system designed to streamline the daily operations of dormitories. <br> From room assignments to maintenance tracking, our platform helps administrators and students stay connected and organized. </p>
+            <h1>About The Dormitory </h1>
+            <p>this sytem is a comprehensive student dormitory management system designed to streamline the daily operations of dormitories. <br> From room assignments to maintenance tracking, our platform helps administrators and students stay connected and organized. </p>
             <p>Our mission is to create a seamless living experience for students while reducing administrative overhead for dormitory staff. </p>
         </div>
     </section>
