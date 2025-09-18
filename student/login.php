@@ -1,8 +1,8 @@
 <?php   
+session_start();
 
     require_once "../functions/functions.php";
     require_once "../db/config.php";
-    session_start();
     if(isset($_SESSION["signup_sucess"])){
         $signup_success = $_SESSION["signup_sucess"] || false;
     }

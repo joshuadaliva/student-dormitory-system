@@ -1,9 +1,9 @@
 <?php
+session_start();
 
     require_once "../db/config.php";
     require_once "../functions/functions.php";
 
-    session_start();
 
     isAdmin("../admin/dashboard.php");
     if(isset($_SESSION["user_type"])){
@@ -49,7 +49,7 @@
                 <p class="success-login"><?= htmlspecialchars($_SESSION["success_login"]) ?></p>
                 <?php unset($_SESSION["success_login"]); ?>
             <?php endif ?>
-            <h1>Student Dashboard</h1>
+            <h1 style="margin-left: 30px;">Student Dashboard</h1>
             <div class="container">
                 <div class="info">
                     <h1><i class="fas fa-user-circle" style="color: var(--blue);"></i>  My Information</h1>

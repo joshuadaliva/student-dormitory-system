@@ -1,8 +1,8 @@
 <?php
-
+session_start();
 require_once "../db/config.php";
 require_once "../functions/functions.php";
-session_start();
+
 
 
 isStudent("../student/dashboard.php");
@@ -269,7 +269,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_delete"])) {
                 </form>
             </div>
         </div>
-            <h1>Manage Rooms</h1>
+            <h1 style="margin-left:30px">Manage Rooms</h1>
             <div class="container">
                 <h1>Add New Room</h1>
                 <?php if (!empty($error)): ?>

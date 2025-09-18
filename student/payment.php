@@ -1,9 +1,9 @@
 <?php
+session_start();
 
 require_once "../db/config.php";
 require_once "../functions/functions.php";
 
-session_start();
 
 isAdmin("../admin/dashboard.php");
 if (isset($_SESSION["user_type"])) {
@@ -25,8 +25,11 @@ $success = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
     $is_student_payment_exist = countWhereAllRows("SELECT p.payment_id FROM payments p WHERE p.student_id = ? and p.status = 'Pending'", $_SESSION["student_id"]);
-    $is_student_paid_this_month = countWhereAllRows("SELECT COUNT(*) as total FROM payments WHERE student_id = ? and month(payment_date) and year(payment_date) and status = 'Approved'", $_SESSION["student_id"]);
-    if($is_student_paid_this_month){
+    $is_student_paid_this_month_query = "SELECT COUNT(*) as total FROM payments WHERE student_id = ? and month(payment_date) and year(payment_date) and status = 'Approved' and booking_id = ?";
+    $stmt = $conn->prepare($is_student_paid_this_month_query);
+    $stmt->execute([$_SESSION["student_id"] , $_POST["booking_id"]]);
+    $count = $stmt->fetch(PDO::FETCH_COLUMN);
+    if($count){
         $error = "you already paid this month";
     }
     else{

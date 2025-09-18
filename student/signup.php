@@ -1,13 +1,16 @@
 <?php
+session_start();
 
     require_once "../db/config.php";
     require_once "../functions/functions.php";
-    session_start();
 
     $error = "";
 
     isStudent("./dashboard.php");
     isAdmin("../admin/dashboard.php");
+
+    $name = $email = $department = $program = $gender = $contact = $address = "";
+    $password = $confirm_pass = "";
 
     if($_SERVER["REQUEST_METHOD"] === "POST"){
 
@@ -105,27 +108,27 @@
         <?php endif ?>
         <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
             <label for="email:">Full Name<br>
-            <input type="text" name="name" id="name" required><br></label>
+            <input type="text" name="name" id="name" value="<?=  htmlspecialchars($name)?>" required><br></label>
             
             <label for="email:">Email address<br>
-            <input type="text" name="email" id="email" required><br></label>
+            <input type="text" name="email" id="email" value="<?=  htmlspecialchars($email)?>" required><br></label>
 
             <div class="other-inputs">
                 <label for="Password:">Password<br>
-                <input type="password" name="password" id="Password" required><br></label>
+                <input type="password" name="password" id="Password" value="<?=  htmlspecialchars($password)?>" required><br></label>
 
                 <label for="Confirm Password:">Confirm Password<br>
-                <input type="password" name="confirm_pass" id="confirm_pass" required><br></label>
+                <input type="password" name="confirm_pass" id="confirm_pass" value="<?=  htmlspecialchars($confirm_pass)?>"  required><br></label>
 
                 <label for="department:">department<br>
                 <select name="department" id="department" required>
-                    <option value=""></option>
+                    <option value="<?= htmlspecialchars($department)?>"></option>
                     <option value="ccs">css</option>
                 </select></label>
 
                 <label for="program:">program<br>
                 <select name="program" id="program" required>
-                    <option value=""></option>
+                    <option value="<?=  htmlspecialchars($program)?>"></option>
                     <option value="bsit">BSIT</option>
                     <option value="bscs">BSCS</option>
                     <option value="bsis">BSIS</option>
@@ -133,17 +136,17 @@
 
                 <label for="Gender:">Gender<br>
                 <select name="gender" id="Gender" required>
-                    <option value=""></option>
+                    <option value="<?=  htmlspecialchars($gender)?>"></option>
                     <option value="Male">male</option>
                     <option value="Female">female</option>
                 </select></label>
 
                 <label for="contact number:">Contact Number<br>
-                <input type="number" name="contact" id="contact" required><br></label>
+                <input type="number" name="contact" id="contact" value="<?=  htmlspecialchars($contact)?>" required><br></label>
             </div>
 
             <label for="address:">address<br>
-            <input type="text" name="address" id="address" required><br></label>
+            <input type="text" name="address" id="address" value="<?=  htmlspecialchars($address)?>" required><br></label>
 
             <input type="submit" value="Register" class="register">
 

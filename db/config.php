@@ -1,4 +1,3 @@
-
 <?php
 
     $localhost = "localhost";
@@ -15,4 +14,3 @@
     }
 
 
-?>

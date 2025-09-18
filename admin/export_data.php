@@ -1,8 +1,7 @@
 <?php
-
+session_start();
 require_once "../db/config.php";
 require_once "../functions/functions.php";
-session_start();
 
 
 isStudent("../student/dashboard.php");
@@ -56,5 +55,3 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["download-submit"])){
     
     
 }
-
-?>

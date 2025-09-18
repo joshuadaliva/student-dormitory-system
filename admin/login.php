@@ -1,8 +1,8 @@
 <?php   
-
+    session_start();
     require_once "../functions/functions.php";
     require_once "../db/config.php";
-    session_start();
+    
 
     isStudent("../student/dashboard.php");
     isAdmin("./dashboard.php");
@@ -10,6 +10,8 @@
 
     $error = "";
     $success = "";
+    $email = "";
+    $password= "";
     if($_SERVER["REQUEST_METHOD"] === "POST"){
         $signup_success = null;
         unset($_SESSION["signup_sucess"]);
@@ -75,9 +77,9 @@
             <?php endif ?>
             <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
                 <label for="email">Email:</label><br>
-                <input type="email" name="email" id="email"><br>
+                <input type="email" name="email" id="email" value="<?=  htmlspecialchars($email)?>"><br>
                 <label for="password">Password:</label><br>
-                <input type="password" name="password" id="password"><br>
+                <input type="password" name="password" id="password" value="<?=  htmlspecialchars($password)?>"><br>
                 <input type="submit" value="Sign In" class="submit">
                 
             </form>

@@ -1,8 +1,8 @@
 <?php
+session_start();
 
     require_once "../db/config.php";
     require_once "../functions/functions.php";
-    session_start();
 
 
     isStudent("../student/dashboard.php");
@@ -44,10 +44,10 @@
         <?php require_once "../component/sidebar.php" ?>
         <div class="admin-dashboard">
             <?php if(isset($_SESSION["success_login"])): ?>
-                <p class="success-login"><?= htmlspecialchars($_SESSION["success_login"]) ?></p>
+                <p class="success-login" style="margin-left: 15px;"><?= htmlspecialchars($_SESSION["success_login"]) ?></p>
                 <?php unset($_SESSION["success_login"]); ?>
             <?php endif ?>
-            <h1>Admin Dashboard</h1>
+            <h1 style="margin-left: 15px;">Admin Dashboard</h1>
             <div class="container">
                 <div class="all-overview-section">
                     <div class="card card-overview" style="background-color: #22c55e; color:white">

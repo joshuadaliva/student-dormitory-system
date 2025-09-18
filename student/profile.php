@@ -1,9 +1,9 @@
 <?php
+session_start();
 
     require_once "../db/config.php";
     require_once "../functions/functions.php";
 
-    session_start();
 
     isAdmin("../admin/dashboard.php");
     if(isset($_SESSION["user_type"])){
