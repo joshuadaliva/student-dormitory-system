@@ -8,9 +8,6 @@ main{
     flex: 1;
     margin-left: 265px;
 }
-.student-profile h1{
-    margin-left: 30px;
-}
 .student-profile .success-login{
     background-color: #bcfcc9;
     color: #22c55e;
