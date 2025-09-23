@@ -20,8 +20,7 @@ if (isset($_SESSION["user_type"])) {
 // FETCH BOOKINGS DETAILS
 $payment_details = fetchDetails("SELECT r.room_number, r.roomType, b.booking_id, r.rent_fee from rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students s USING(student_id) WHERE b.status = 'Approved' and s.student_id = ?", $_SESSION["student_id"], $conn);
 $all_payments = fetchAllDetails("SELECT p.payment_id, r.room_id, p.amount, date_format(p.payment_date, '%M,%d %Y') as payment_date , p.notes, p.status FROM payments p INNER JOIN bookings b USING(booking_id) INNER JOIN rooms r USING(room_id) WHERE p.student_id = ? order by p.payment_date desc", $_SESSION["student_id"], $conn);
-$error = "";
-$success = "";
+
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
     $is_student_payment_exist = countWhereAllRows("SELECT p.payment_id FROM payments p WHERE p.student_id = ? and p.status = 'Pending'", $_SESSION["student_id"]);
@@ -30,7 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
     $stmt->execute([$_SESSION["student_id"] , $_POST["booking_id"]]);
     $count = $stmt->fetch(PDO::FETCH_COLUMN);
     if($count){
-        $error = "you already paid this month";
+        $_SESSION["error"] = "you already paid this month";
+        header("Location:". $_SERVER["PHP_SELF"]);
+        exit;
     }
     else{
         if (empty($is_student_payment_exist)) {
@@ -38,12 +39,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
             $stmt->execute([$_SESSION["student_id"], $_POST["booking_id"], $_POST["rent_fee"]]);
             $rowCount = $stmt->rowCount();
             if ($rowCount > 0) {
-                $success = "payment created , status pending";
                 $payment_details = fetchDetails("SELECT r.room_number, r.roomType, b.booking_id, r.rent_fee from rooms r INNER JOIN bookings b USING(room_id) INNER JOIN students s USING(student_id) WHERE b.status = 'Approved' and s.student_id = ?", $_SESSION["student_id"], $conn);
                 $all_payments = fetchAllDetails("SELECT p.payment_id, r.room_id, p.amount, date_format(p.payment_date, '%M,%d %Y') as payment_date , p.notes, p.status FROM payments p INNER JOIN bookings b USING(booking_id) INNER JOIN rooms r USING(room_id) WHERE p.student_id = ? order by p.payment_date desc", $_SESSION["student_id"], $conn);
+                $_SESSION["success"] = "payment created , status pending";
+                header("Location:". $_SERVER["PHP_SELF"]);
+                exit;
             }
         } else {
-            $error = "you currently have pending payment";
+            $_SESSION["error"] = "you currently have pending payment";
+            header("Location:". $_SERVER["PHP_SELF"]);
+            exit;
         }
     }
 }
@@ -67,11 +72,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["pay_now"])) {
             <h1>My Payments</h1>
             <div class="room-list container">
                 <h1>Make Payments</h1>
-                <?php if (!empty($error)): ?>
-                    <p class="error-message"><?= htmlspecialchars($error) ?></p>
+                <?php if (!empty($_SESSION["error"])): ?>
+                    <p class="error-message"><?= htmlspecialchars($_SESSION["error"]) ?></p>
+                    <?php unset($_SESSION["error"]); ?>
                 <?php endif ?>
-                <?php if (!empty($success)): ?>
-                    <p class="success-message"><?= htmlspecialchars($success) ?></p>
+                <?php if (!empty($_SESSION["success"])): ?>
+                    <p class="success-message"><?= htmlspecialchars($_SESSION["success"]) ?></p>
+                    <?php unset($_SESSION["success"]); ?>
                 <?php endif ?>
                 <?php if(empty($payment_details)): ?>
                         <p>No payment.</p>

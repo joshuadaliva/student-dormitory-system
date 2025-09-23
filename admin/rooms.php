@@ -16,14 +16,17 @@ if (isset($_SESSION["user_type"])) {
 
 $room_list = fetchAllDetails("SELECT  description, room_id, room_number,roomType,status,rent_fee from rooms", "", $conn);
 
-$error = "";
-$success = "";
+
 if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["submit"])) {
 
     if (empty($_POST["room_number"]) || empty($_POST["room_type"]) || empty($_POST["room_status"]) || empty($_POST["rent"]) || empty($_POST["description"])) {
-        $error = "all inputs cannot be blank";
+        $_SESSION["error"] = "all inputs cannot be blank";
+        header("Location:". $_SERVER['PHP_SELF']);
+        exit;
     } elseif ($_FILES["file"]["error"] === UPLOAD_ERR_NO_FILE) {
-        $error = "image cannot be blank";
+        $_SESSION["error"] = "image cannot be blank";
+        header("Location:". $_SERVER['PHP_SELF']);
+        exit;
     }
 
     $room_number = sanitizeInput($_POST["room_number"]);
@@ -33,26 +36,34 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["submit"])) {
     $description = sanitizeInput($_POST["description"]);
 
 
-    if (empty($error)) {
+    if (empty($_SESSION["error"])) {
         $file = uploadImage($_FILES);
         if (isset($file["error"])) {
-            $error = $file["error"];
+            $_SESSION["error"] =  $file["error"];
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         } elseif (isset($file["success"])) {
             $stmt = $conn->prepare("SELECT room_number from rooms where room_number = ?");
             $stmt->execute([$room_number]);
             $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
 
             if ($is_room_number_exist) {
-                $error = "room number exist, try another room number";
+                $_SESSION["error"] =  "room number exist, try another room number";
+                header("Location:". $_SERVER['PHP_SELF']);
+                exit;
             } else {
                 $stmt = $conn->prepare("INSERT INTO rooms(room_number,roomType,status,rent_fee,description,imagePath) values(?,?,?,?,?,?)");
                 $stmt->execute([$room_number, $room_type, $room_status, $rent, $description, $file["file"]]);
 
                 if ($stmt->rowCount() > 0) {
-                    $success = "room added successfully";
+                    $_SESSION["success"] =  "room added successfully";
+                    header("Location:". $_SERVER['PHP_SELF']);
                     $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+                    exit;
                 } else {
-                    $error = "room not added";
+                    $_SESSION["error"] =  "room not added";
+                    header("Location:". $_SERVER['PHP_SELF']);
+                    exit;
                 }
             }
         }
@@ -60,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["submit"])) {
 }
 
 // edit form
-
 if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["edit_form"])) {
 
     $room_id = sanitizeInput($_POST["room_id"]);
@@ -72,7 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["edit_form"])) {
 
     $is_occupied = fetchDetails("SELECT r.room_id from bookings b inner JOIN rooms r USING (room_id) where b.status = 'Approved' and r.status = 'Occupied' and room_id = ?", $room_id, $conn);
     if (empty($_POST["room_number"]) || empty($_POST["room_type"]) || empty($_POST["room_status"]) || empty($_POST["rent"]) || empty($_POST["description"])) {
-        $error = "all inputs cannot be blank";
+        $_SESSION["error"] =  "all inputs cannot be blank";
+        header("Location:". $_SERVER['PHP_SELF']);
+        exit;
     }
 
     if($is_occupied){
@@ -82,37 +94,51 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["edit_form"])) {
                 $stmt->execute([$room_number]);
                 $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
                 if ($is_room_number_exist) {
-                    $error = "room number exist, try another room number" ;
+                    $_SESSION["error"] =  "room number exist, try another room number" ;
+                    header("Location:". $_SERVER['PHP_SELF']);
+                    exit;
                 } else {
                     $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, description = ?, rent_fee = ? where room_id = ?");
                     $stmt->execute([$room_number, $room_type, $description, $rent, $room_id]);
                     if ($stmt->rowCount() > 0) {
-                        $success = "room updated";
                         $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,rent_fee, status from rooms", null, $conn);
+                        $_SESSION["success"] =  "room updated";
+                        header("Location:". $_SERVER['PHP_SELF']);
+                        exit;
                     } else {
-                        $error = "error updating the room";
+                        $_SESSION["error"] =  "error updating the room";
+                        header("Location:". $_SERVER['PHP_SELF']);
+                        exit;
                     }
                 }
             } else {
                 $file = uploadImage($_FILES);
                 if (isset($file["error"])) {
-                    $error = $file["error"];
+                    $_SESSION["error"] =  $file["error"];
+                    header("Location:". $_SERVER['PHP_SELF']);
+                    exit;
                 } elseif (isset($file["success"])) {
                     $stmt = $conn->prepare("SELECT room_number from rooms where room_number = ?");
                     $stmt->execute([$room_number]);
                     $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
         
                     if ($is_room_number_exist) {
-                        $error = "room number exist, try another room number";
+                        $_SESSION["error"] =  "room number exist, try another room number";
+                        header("Location:". $_SERVER['PHP_SELF']);
+                        exit;
                     } else {
                         $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, status = ?, rent_fee = ?, description = ?, imagePath = ? where room_id = ?");
                         $stmt->execute([$room_number, $room_type, $room_status, $rent, $description, $file["file"]]);
         
                         if ($stmt->rowCount() > 0) {
-                            $success = "room update";
                             $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+                            $_SESSION["success"] =  "room updated";
+                            header("Location:". $_SERVER['PHP_SELF']);
+                            exit;
                         } else {
-                            $error = "error updating the room";
+                            $_SESSION["error"] =  "error updating the room";
+                            header("Location:". $_SERVER['PHP_SELF']);
+                            exit;
                         }
                     }
                 }
@@ -127,37 +153,51 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["edit_form"])) {
                 $stmt->execute([$room_number]);
                 $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
                 if ($is_room_number_exist) {
-                    $error = "room number exist, try another room number" ;
+                    $_SESSION["error"] =  "room number exist, try another room number" ;
+                    header("Location:". $_SERVER['PHP_SELF']);
+                    exit;
                 } else {
                     $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, description = ?, rent_fee = ?, status = ? where room_id = ?");
                     $stmt->execute([$room_number, $room_type, $description, $rent, $room_status, $room_id]);
                     if ($stmt->rowCount() > 0) {
-                        $success = "room updated";
                         $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+                        $_SESSION["success"] =  "room updated";
+                        header("Location:". $_SERVER['PHP_SELF']);
+                        exit;
                     } else {
-                        $error = "error updating the room";
+                        $_SESSION["error"] =  "error updating the room";
+                        header("Location:". $_SERVER['PHP_SELF']);
+                        exit;
                     }
                 }
             } else {
                 $file = uploadImage($_FILES);
                 if (isset($file["error"])) {
-                    $error = $file["error"];
+                    $_SESSION["error"] =  $file["error"];
+                    header("Location:". $_SERVER['PHP_SELF']);
+                    exit;
                 } elseif (isset($file["success"])) {
                     $stmt = $conn->prepare("SELECT room_number from rooms where room_number = ?");
                     $stmt->execute([$room_number]);
                     $is_room_number_exist = $stmt->fetch(PDO::FETCH_COLUMN);
         
                     if ($is_room_number_exist) {
-                        $error = "room number exist, try another room number";
+                        $_SESSION["error"] =  "room number exist, try another room number";
+                        header("Location:". $_SERVER['PHP_SELF']);
+                        exit;
                     } else {
                         $stmt = $conn->prepare("UPDATE rooms set room_number = ? , roomType = ?, rent_fee = ?, description = ?, imagePath = ? where room_id = ?");
                         $stmt->execute([$room_number, $room_type, $rent, $description, $file["file"]]);
         
                         if ($stmt->rowCount() > 0) {
-                            $success = "room update";
                             $room_list = fetchAllDetails("SELECT description, room_id, room_number,roomType,status,rent_fee from rooms", null, $conn);
+                            $_SESSION["success"] =  "room update";
+                            header("Location:". $_SERVER['PHP_SELF']);
+                            exit;
                         } else {
-                            $error = "error updating the room";
+                            $_SESSION["error"] =  "error updating the room";
+                            header("Location:". $_SERVER['PHP_SELF']);
+                            exit;
                         }
                     }
                 }
@@ -166,7 +206,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST" && isset($_POST["edit_form"])) {
         }
     }
     else{
-        $error = "unable to update room with the room id of " . $room_number;
+        $_SESSION["error"] = "unable to update room with the room id of " . $room_number;
+        header("Location:". $_SERVER['PHP_SELF']);
+        exit;
     }
 }
 
@@ -175,17 +217,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_delete"])) {
     $room_id = sanitizeInput($_POST["room_id"]);
     $is_room_occupied = fetchDetails("SELECT room_id from rooms WHERE room_id = ? and status = 'Occupied'", $room_id, $conn);
     if ($is_room_occupied) {
-        $error = "cannot delete room, room occupied";
+        $_SESSION["error"] = "cannot delete room, room occupied";
+        header("Location:". $_SERVER['PHP_SELF']);
+        exit;
     } else {
         $stmt = $conn->prepare("UPDATE rooms set status = 'Deleted' where room_id = ?");
         $stmt->execute([$room_id]);
         $room_row_count = $stmt->rowCount();
         if ($room_row_count > 0) {
-            $success = "room deleted";
             $room_list = fetchAllDetails("SELECT  description, room_id, room_number,roomType,status,rent_fee from rooms", "", $conn);
+            $_SESSION["success"] = "room deleted";
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         } else {
-            $error = "cannot delete room, please try again later";
             $room_list = fetchAllDetails("SELECT  description, room_id, room_number,roomType,status,rent_fee from rooms", "", $conn);
+            $_SESSION["error"] = "cannot delete room, please try again later";
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }
     }
 }
@@ -272,11 +320,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_delete"])) {
             <h1 style="margin-left:30px">Manage Rooms</h1>
             <div class="container">
                 <h1>Add New Room</h1>
-                <?php if (!empty($error)): ?>
-                    <p class="error-message"><?= htmlspecialchars($error) ?></p>
+                <?php if (!empty($_SESSION["error"])): ?>
+                    <p class="error-message"><?= htmlspecialchars($_SESSION["error"]) ?></p>
+                    <?php unset($_SESSION["error"]); ?>
                 <?php endif ?>
-                <?php if (!empty($success)): ?>
-                    <p class="success-message"><?= htmlspecialchars($success) ?></p>
+                <?php if (!empty($_SESSION["success"])): ?>
+                    <p class="success-message"><?= htmlspecialchars($_SESSION["success"]) ?></p>
+                    <?php unset($_SESSION["success"]); ?>
                 <?php endif ?>
                 <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" enctype="multipart/form-data" method="POST">
                     <div class="form-divide">

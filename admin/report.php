@@ -15,24 +15,27 @@ else{
     header("Location: " . "./login.php");
 }
 
-$error = "";
-$success = "";
 
+
+// Get current date 
 $date = date('Y-m-d');
 $month = date("m", strtotime($date));
 $day = date("d", strtotime($date));
 $year = date("Y", strtotime($date));
 
+// Fetch payments for the current month and year
 $stmt = $conn -> prepare("SELECT s.name , r.room_number, p.amount, date_format(p.payment_date, '%M %d, %Y') as date_payment ,p.status from payments p INNER JOIN students s USING(student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING(room_id) WHERE p.status = 'Approved' and month(p.payment_date) = ? and year(p.payment_date) = ?");
 $stmt ->execute([$month,$year]);
 $monthly_payments = $stmt->fetchAll(PDO::FETCH_ASSOC);     
 
 
-
+// Handle form submission for filtering by date
 if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["date-submit"])){
 
     if(empty($_POST["date"])){
-        $error = "date cannot be empty";
+        $_SESSION["error"] = "date cannot be empty";
+        header("Location:". $_SERVER['PHP_SELF']);
+        exit;
     }
     if(empty($error)){
         $sanitize_date = sanitizeInput($_POST["date"]);
@@ -42,7 +45,6 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["date-submit"])){
         $stmt = $conn -> prepare("SELECT s.name , r.room_number, p.amount, date_format(p.payment_date, '%M %d, %Y') as date_payment ,p.status from payments p INNER JOIN students s USING(student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING(room_id) WHERE p.status = 'Approved' and month(p.payment_date) = ? and year(p.payment_date) = ?");
         $stmt ->execute([$month,$year]);
         $monthly_payments = $stmt->fetchAll(PDO::FETCH_ASSOC);     
-    
     }
     
 }
@@ -67,11 +69,9 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["date-submit"])){
     <main>
         <?php require_once "../component/sidebar.php" ?>
         <div class="container">
-            <?php if (!empty($error)): ?>
-                <p class="error-message"><?= htmlspecialchars($error) ?></p>
-            <?php endif ?>
-            <?php if (!empty($success)): ?>
-                <p class="success-message"><?= htmlspecialchars($success) ?></p>
+            <?php if (!empty($_SESSION["error"])): ?>
+                <p class="error-message"><?= htmlspecialchars($_SESSION["error"]) ?></p>
+                <?php unset($_SESSION["error"]); ?>
             <?php endif ?>
             <h1>Reports</h1>
             <div class="recent card">

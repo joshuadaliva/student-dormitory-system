@@ -21,8 +21,6 @@ session_start();
     $student_info = fetchDetails("SELECT student_id, name, email,department,program,gender, address,contact,status from students where student_id = ?", $student_id, $conn);
 
 
-    $error = "";
-    $success = "";
     $accepted_gender = ["Male", "Female"];
     $accepted_program = ["bsit", "bscs","bsis"];
     $accepted_department = ["ccs"];
@@ -36,26 +34,39 @@ session_start();
         $contact = sanitizeInput($_POST["contact"]);
 
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            $error = "email not valid";
+            $_SESSION["error"] = "email not valid";
+            header("Location:". $_SERVER["PHP_SELF"]);
+            exit;
         }
         else if(empty($name) || empty($email) || empty($department) || empty($program) || empty($gender) || empty($contact) || empty($address)){
-            $error = "all fields are required";
+            $_SESSION["error"] ="all fields are required";
+            header("Location:". $_SERVER["PHP_SELF"]);
+            exit;
         }
         else if($student_info["name"] === $name && $student_info["gender"] === $gender &&
         $student_info["email"] === $email && $student_info["department"] === $department &&
         $student_info["program"] === $program && $student_info["address"] === $address &&
         $student_info["contact"] === $contact 
         ){
-            $error = "info not change, try changing the name";
+            $_SESSION["error"] = "info not change, try changing the name";
+            header("Location:". $_SERVER["PHP_SELF"]);
+            exit;
+            
         }
         else if(!in_array($gender,$accepted_gender)){
-            $error = "invalid gender";
+            $_SESSION["error"] = "invalid gender";
+            header("Location:". $_SERVER["PHP_SELF"]);
+            exit;
         }
         else if(!in_array($program,$accepted_program)){
-            $error = "invalid program";
+            $_SESSION["error"] = "invalid program";
+            header("Location:". $_SERVER["PHP_SELF"]);
+            exit;
         }        
         else if(!in_array($department,$accepted_department)){
-            $error = "invalid department";
+            $_SESSION["error"] = "invalid department";
+            header("Location:". $_SERVER["PHP_SELF"]);
+            exit;
         }        
 
 
@@ -63,13 +74,19 @@ session_start();
             $stmt = $conn ->prepare("UPDATE students set name = ?, gender = ?, email = ?, department = ?, program = ?, address = ?, contact = ? where student_id = ?");
             $stmt->execute([$name,$gender,$email,$department,$program,$address,$contact,$student_id]);
             if($stmt->rowCount() > 0){
-                $success = "profile updated successfully";
                 $student_info = fetchDetails("SELECT student_id, name, email,department,program,gender, address,contact,status from students where student_id = ?", $student_id, $conn);
+                $_SESSION["success"] = "profile updated successfully";
+                header("Location:". $_SERVER["PHP_SELF"]);
+                exit;
 
             }
             else{
-                $error = "there's an error updating profile";
                 $student_info = fetchDetails("SELECT student_id, name, email,department,program,gender, address,contact,status from students where student_id = ?", $student_id, $conn);
+                $_SESSION["error"] = "there's an error updating profile";
+                header("Location:". $_SERVER["PHP_SELF"]);
+                exit;
+
+
             }
         }
         
@@ -139,11 +156,13 @@ session_start();
             <div class="container">
                 <div class="info">
                     <h1><i class="fas fa-user-circle" style="color: var(--blue);"></i>  Update Information</h1>
-                    <?php if (!empty($error)): ?>
-                        <p class="error-message"><?= htmlspecialchars($error) ?></p>
+                    <?php if (!empty($_SESSION["error"])): ?>
+                        <p class="error-message"><?= htmlspecialchars($_SESSION["error"]) ?></p>
+                        <?php unset($_SESSION["error"]); ?>
                     <?php endif ?>
-                    <?php if (!empty($success)): ?>
-                        <p class="success-message"><?= htmlspecialchars($success) ?></p>
+                    <?php if (!empty($_SESSION["success"])): ?>
+                        <p class="success-message"><?= htmlspecialchars($_SESSION["success"]) ?></p>
+                        <?php unset($_SESSION["success"]); ?>
                     <?php endif ?>
                     <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
                         <div class="container-info">

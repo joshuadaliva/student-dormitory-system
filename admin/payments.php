@@ -1,58 +1,133 @@
 <?php
-session_start();
+session_start(); // Start session to manage authentication 
 
-require_once "../db/config.php";
-require_once "../functions/functions.php";
+require_once "../db/config.php"; 
+require_once "../functions/functions.php"; 
 
-
+// Redirect student users away from this page
 isStudent("../student/dashboard.php");
-if(isset($_SESSION["user_type"])){
-    if( $_SESSION["user_type"] !== "admin") {
-        header("Location: " . "./login.php");
+
+// Ensure user is logged in and is an admin
+if (isset($_SESSION["user_type"])) {
+    if ($_SESSION["user_type"] !== "admin") {
+        header("Location: ./login.php"); // Non-admin users redirected to login
     }
-}
-else{
-    header("Location: " . "./login.php");
+} else {
+    header("Location: ./login.php"); // If not logged in, redirect to login
 }
 
+// Fetch all pending payments
+$all_pending_payments = fetchAllDetails(
+    "SELECT p.payment_id, s.name, r.room_number, p.amount, DATE_FORMAT(p.payment_date, '%M %d, %Y') as date_payment, p.status, p.notes 
+     FROM payments p 
+     INNER JOIN students s USING (student_id) 
+     INNER JOIN bookings USING (booking_id) 
+     INNER JOIN rooms r USING (room_id) 
+     WHERE p.status = ? 
+     ORDER BY p.payment_date DESC",
+    'Pending',
+    $conn
+);
 
-$all_pending_payments = fetchAllDetails("SELECT p.payment_id, s.name,  r.room_number, p.amount, date_format(p.payment_date, '%M,%d%Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) where p.status = ? order by p.payment_date desc", 'Pending', $conn);
-$all_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, date_format(p.payment_date, '%M,%d%Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) order by p.payment_date desc", "" , $conn);
-$error = "";
-$success = "";
+// Fetch all payments
+$all_payments = fetchAllDetails(
+    "SELECT p.payment_id, s.name, p.amount, DATE_FORMAT(p.payment_date, '%M %d, %Y') as date_payment, p.status, p.notes 
+     FROM payments p 
+     INNER JOIN students s USING (student_id) 
+     INNER JOIN bookings USING (booking_id) 
+     INNER JOIN rooms r USING (room_id) 
+     ORDER BY p.payment_date DESC",
+    "",
+    $conn
+);
+
+// Approve a payment
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["approve"])) {
     $stmt = $conn->prepare("UPDATE payments SET status = 'Approved' WHERE payment_id = ?");
     $stmt->execute([$_POST["payment_id"]]);
-    if ($stmt->rowCount() > 0) {
-        $success = "payment approved";
-        $all_pending_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, r.room_number, date_format(p.payment_date, '%M,%d%Y') as date_payment FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) where p.status = ? order by p.payment_date desc", 'Pending', $conn);
-        $all_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, date_format(p.payment_date, '%M,%d%Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) order by p.payment_date desc", "" , $conn);
 
+    if ($stmt->rowCount() > 0) {
+        // Refresh payment lists
+        $all_pending_payments = fetchAllDetails(
+            "SELECT p.payment_id, s.name, p.amount, r.room_number, DATE_FORMAT(p.payment_date, '%M %d, %Y') as date_payment 
+             FROM payments p 
+             INNER JOIN students s USING (student_id) 
+             INNER JOIN bookings USING (booking_id) 
+             INNER JOIN rooms r USING (room_id) 
+             WHERE p.status = ? 
+             ORDER BY p.payment_date DESC",
+            'Pending',
+            $conn
+        );
+        $all_payments = fetchAllDetails(
+            "SELECT p.payment_id, s.name, p.amount, DATE_FORMAT(p.payment_date, '%M %d, %Y') as date_payment, p.status, p.notes 
+             FROM payments p 
+             INNER JOIN students s USING (student_id) 
+             INNER JOIN bookings USING (booking_id) 
+             INNER JOIN rooms r USING (room_id) 
+             ORDER BY p.payment_date DESC",
+            "",
+            $conn
+        );
+
+        $_SESSION["success"] = "payment approved";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     } else {
-        $error = "there was an error approving the payment";
+        $_SESSION["error"] = "there was an error approving the payment";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     }
 }
 
+// Reject a payment
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_payment_rejection"])) {
-    if(empty($_POST["notes"])){
-        $error = "notes cannot be empty";
-    }
-    else{
+    if (empty($_POST["notes"])) {
+        // Rejection requires notes
+        $_SESSION["error"] = "notes cannot be empty";
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
         $notes = sanitizeInput($_POST["notes"]);
         $stmt = $conn->prepare("UPDATE payments SET status = 'Rejected', notes = ? WHERE payment_id = ?");
-        $stmt->execute([$notes,$_POST["payment_id"] ]);
+        $stmt->execute([$notes, $_POST["payment_id"]]);
+
         if ($stmt->rowCount() > 0) {
-            $success = "payment Rejected";
-            $all_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, date_format(p.payment_date, '%M,%d%Y') as date_payment, p.status, p.notes FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) order by p.payment_date desc", "" , $conn);
-            $all_pending_payments = fetchAllDetails("SELECT p.payment_id, s.name, p.amount, r.room_number, date_format(p.payment_date, '%M,%d%Y') as date_payment FROM payments p INNER JOIN students s USING (student_id) INNER JOIN bookings USING (booking_id) INNER JOIN rooms r USING (room_id) where p.status = ? order by p.payment_date desc", 'Pending', $conn);
+            // Refresh data
+            $all_payments = fetchAllDetails(
+                "SELECT p.payment_id, s.name, p.amount, DATE_FORMAT(p.payment_date, '%M %d, %Y') as date_payment, p.status, p.notes 
+                 FROM payments p 
+                 INNER JOIN students s USING (student_id) 
+                 INNER JOIN bookings USING (booking_id) 
+                 INNER JOIN rooms r USING (room_id) 
+                 ORDER BY p.payment_date DESC",
+                "",
+                $conn
+            );
+            $all_pending_payments = fetchAllDetails(
+                "SELECT p.payment_id, s.name, p.amount, r.room_number, DATE_FORMAT(p.payment_date, '%M %d, %Y') as date_payment 
+                 FROM payments p 
+                 INNER JOIN students s USING (student_id) 
+                 INNER JOIN bookings USING (booking_id) 
+                 INNER JOIN rooms r USING (room_id) 
+                 WHERE p.status = ? 
+                 ORDER BY p.payment_date DESC",
+                'Pending',
+                $conn
+            );
+
+            $_SESSION["success"] = "payment Rejected";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
         } else {
-            $error = "there was an error rejecting the booking";
+            $_SESSION["error"] = "there was an error rejecting the payment";
+            header("Location: " . $_SERVER['PHP_SELF']);
+            exit;
         }
     }
 }
-
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -78,11 +153,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["confirm_payment_rejec
             </div>
         </div>
         <div class="container">
-            <?php if (!empty($error)): ?>
-                <p class="error-message"><?= htmlspecialchars($error) ?></p>
+            <?php if (!empty($_SESSION["error"])): ?>
+                <p class="error-message"><?= htmlspecialchars($_SESSION["error"]) ?></p>
+                <?php unset($_SESSION["error"]); ?>
             <?php endif ?>
-            <?php if (!empty($success)): ?>
-                <p class="success-message"><?= htmlspecialchars($success) ?></p>
+            <?php if (!empty($_SESSION["success"])): ?>
+                <p class="success-message"><?= htmlspecialchars($_SESSION["success"]) ?></p>
+                <?php unset($_SESSION["success"]); ?>
             <?php endif ?>
             <h1>Manage Payments</h1>
             <div class="recent card">

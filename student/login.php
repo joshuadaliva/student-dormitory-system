@@ -10,8 +10,6 @@ session_start();
     isStudent("./dashboard.php");
     isAdmin("../admin/dashboard.php");
 
-    $error = "";
-    $success = "";
     if($_SERVER["REQUEST_METHOD"] === "POST"){
         $signup_success = null;
         unset($_SESSION["signup_sucess"]);
@@ -19,7 +17,9 @@ session_start();
         $password = sanitizeInput($_POST["password"]);
 
         if(empty($email) || empty($password)){
-            $error = "email and password cannot be blank";
+            $_SESSION["error"] = "email and password cannot be blank";
+            header("Location:". $_SERVER["PHP_SELF"]);
+            exit;
         }
         
         if(empty($error)){
@@ -37,7 +37,9 @@ session_start();
                 header("Location: " . "./dashboard.php");
             }
             else{
-                $error = "wrong username or password";
+                $_SESSION["error"] = "wrong username or password";
+                header("Location:". $_SERVER["PHP_SELF"]);
+                exit;
             }
         }
     }
@@ -70,8 +72,9 @@ session_start();
             <?php if(!empty($success)): ?>
                 <p class="success"><?= $success ?></p>
             <?php endif ?>
-            <?php if(!empty($error)) : ?>
-                <p class="error"><?= $error ?></p>
+            <?php if(!empty($_SESSION["error"])) : ?>
+                <p class="error"><?= $_SESSION["error"] ?></p>
+                <?php unset($_SESSION["error"]); ?>
             <?php endif ?>
             <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
                 <label for="email">Email:</label><br>

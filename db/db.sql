@@ -1,4 +1,8 @@
 
+-- create a database first      CREATE DATABASE db_name;
+-- insert an admin account manually using phpmyadmin (sometimes not working yung pag create account because of password verify using phpmyadmin) kaya
+-- try to create an account sa student tapos kunin mo yung password dun tapos paste mo sa admin (note yung nakabycrypt)
+-- http://localhost/STUDENT-DORM-SYSTEM/admin/login.php
 
 
 create table students(
@@ -23,7 +27,7 @@ create table rooms(
     description varchar(250) not null,
     imagePath varchar(250) not null,
     rent_fee DECIMAL(10,2) not null ,
-    status varchar(20) not null,
+    status enum("Occupied", "Unavailable", "Deleted", "Available") not null,
     created_at timestamp default current_timestamp not null
 );
 
@@ -35,7 +39,7 @@ create table bookings(
     student_id int not null,
     room_id int not null,
     booking_date DATETIME DEFAULT CURRENT_TIMESTAMP not null,
-    status varchar(20) not null,
+    status enum("Approved", "Rejected", "Checkout", "Pending") not null default "Pending",
     checkout_date DATETIME null,
     created_at timestamp default current_timestamp not null,
     foreign key(student_id) references students(student_id),
@@ -49,8 +53,8 @@ create table payments(
     student_id int not null,
     booking_id int not null,
     amount DECIMAL(10,2) not null,
-    payment_date timestamp DEFAULT CURRENT_TIMESTAMP not null
-    status varchar(20),
+    payment_date timestamp DEFAULT CURRENT_TIMESTAMP not null,
+    status enum("Approved", "Rejected", "Pending") default "Pending",
     notes varchar(250) DEFAULT "no notes",
     created_at timestamp default current_timestamp not null,
     foreign key(student_id) references students(student_id),

@@ -4,8 +4,6 @@ session_start();
     require_once "../db/config.php";
     require_once "../functions/functions.php";
 
-    $error = "";
-
     isStudent("./dashboard.php");
     isAdmin("../admin/dashboard.php");
 
@@ -28,29 +26,43 @@ session_start();
         $accepted_department = ["ccs"];
         
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-            $error = "email not valid";
+            $_SESSION["error"] = "email not valid";
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }
         else if(empty($name) || empty($email) || empty($password) || 
         empty($confirm_pass) || empty($department) || empty($program ||
         empty($gender) || empty($contact) || empty($address)
         )){
-            $error = "all fields are required";
+            $_SESSION["error"] =  "all fields are required";
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }
         else if(strlen($password) < 8 || !preg_match("/[0-9]/", $password) || !preg_match("/[\W]/", $password)){
-            $error = "password must be 8 charaters long, contains atleast one number and contains atleast one symbol ";
+            $_SESSION["error"] =  "password must be 8 charaters long, contains atleast one number and contains atleast one symbol ";
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }
 
         else if($password !== $confirm_pass){
-            $error = "password not matched";
+            $_SESSION["error"] = "password not matched";  
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }
         else if(!in_array($gender,$accepted_gender)){
-            $error = "invalid gender";
+            $_SESSION["error"] = "invalid gender";  
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }
         else if(!in_array($program,$accepted_program)){
-            $error = "invalid program";
+            $_SESSION["error"] = "invalid program";
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }        
         else if(!in_array($department,$accepted_department)){
-            $error = "invalid department";
+            $_SESSION["error"] = "invalid department";
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }        
     
         
@@ -62,7 +74,9 @@ session_start();
             $is_email_exist = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if($is_email_exist){
-                $error = "email already exist";
+                $_SESSION["error"] = "email already exist";
+                header("Location:". $_SERVER['PHP_SELF']);
+                exit;
             }
             else{
                 $password = password_hash($password, PASSWORD_BCRYPT);
@@ -103,8 +117,9 @@ session_start();
     <div class="right-panel">
         <h1>Create your account</h1>
         <p class="text-to-login">or <a href="login.php">login to your existing account</a></p>
-        <?php if(!empty($error)): ?>
-            <p class="error"><?= htmlspecialchars($error) ?></p>
+        <?php if(!empty($_SESSION["error"])): ?>
+            <p class="error"><?= htmlspecialchars($_SESSION["error"]) ?></p>
+            <?php unset($_SESSION["error"]); ?>
         <?php endif ?>
         <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
             <label for="email:">Full Name<br>

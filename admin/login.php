@@ -7,9 +7,6 @@
     isStudent("../student/dashboard.php");
     isAdmin("./dashboard.php");
     
-
-    $error = "";
-    $success = "";
     $email = "";
     $password= "";
     if($_SERVER["REQUEST_METHOD"] === "POST"){
@@ -19,14 +16,18 @@
         $password = sanitizeInput($_POST["password"]);
 
         if(empty($email) || empty($password)){
-            $error = "email and password cannot be blank";
+            $_SESSION["error"] = "email and password cannot be blank"; 
+            header("Location:". $_SERVER['PHP_SELF']);
+            exit;
         }
         
-        if(empty($error)){
+        // Prepare SQL query to fetch admin details 
+        if(empty($_SESSION["error"])){
             $query = "SELECT admin_id, name , email, password from admin where email = ? LIMIT 1";
             $stmt = $conn->prepare($query);
             $stmt->execute([$email]);
             $admin_info = $stmt->fetch(PDO::FETCH_ASSOC);
+            
 
             if($admin_info && password_verify($password, $admin_info["password"])){
                 $_SESSION["admin_id"] = $admin_info["admin_id"];
@@ -34,9 +35,12 @@
                 $_SESSION["user_type"] = "admin";
                 $_SESSION["success_login"] = "login successful";
                 header("Location: " . "./dashboard.php");
+                exit;
             }
             else{
-                $error = "wrong username or password";
+                $_SESSION["error"] = "wrong username or password";
+                header("Location:". $_SERVER['PHP_SELF']);
+                exit;
             }
         }
     }
@@ -69,13 +73,11 @@
         </div>
         <div class="right-panel">
             <h1>Admin</h1>
-            <?php if(!empty($success)): ?>
-                <p class="success"><?= $success ?></p>
+            <?php if(!empty($_SESSION["error"])) : ?>
+                <p class="error"><?= $_SESSION["error"] ?></p>
+                <?php unset($_SESSION["error"]); ?>
             <?php endif ?>
-            <?php if(!empty($error)) : ?>
-                <p class="error"><?= $error ?></p>
-            <?php endif ?>
-            <form action="<?php htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+            <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
                 <label for="email">Email:</label><br>
                 <input type="email" name="email" id="email" value="<?=  htmlspecialchars($email)?>"><br>
                 <label for="password">Password:</label><br>
